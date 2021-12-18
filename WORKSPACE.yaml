@@ -1,0 +1,35 @@
+# this file makes this a leeway workspace
+defaultTarget: components:all
+defaultArgs:
+  coreYarnLockBase: ../..
+  npmPublishTrigger: "false"
+  publishToNPM: true
+  localAppVersion: unknown
+  codeCommit: 6fa6863137230f9daf7ef10c2f379cb2ec21fcb2
+
+defaultVariant:
+  srcs:
+    exclude:
+    # Make sure we don't include node_modules/**/*.ts by accident
+    - "**/node_modules/**"
+  config:
+    go:
+      lintCommand: ["sh", "-c", "gokart scan && golangci-lint run --disable govet,errcheck,typecheck,staticcheck --allow-parallel-runners --timeout 5m"]
+
+variants:
+- name: oss
+  components:
+    exclude:
+      - components/ee/ws-scheduler
+  srcs:
+    exclude:
+    - "**/ee"
+    - "**/ee/**"
+    - "**/*_ee.*"
+    - "**/*_ee_*.*"
+  env:
+  - BHOJPUR_OSS_BUILD=true
+  config:
+    go:
+      buildTags:
+      - -tags oss
