@@ -1,0 +1,8 @@
+options:
+  no_parent_owners: true
+
+approvers:
+  - shashi-rai
+
+labels:
+  - "team: development"
