@@ -1,0 +1,27 @@
+name: Code-Nightly
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * *"
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: downlaod leeway
+        run: cd /usr/bin && curl -fsSL https://github.com/bhojpur/leeway/releases/download/v0.2.8/leeway_0.2.8_Linux_x86_64.tar.gz | sudo tar xz
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@master
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
+      - run: |
+          gcloud auth configure-docker --quiet
+          export LEEWAY_WORKSPACE_ROOT=$(pwd)
+          headCommit=$(curl -H 'Accept: application/vnd.github.VERSION.sha' https://api.github.com/repos/bhojpur/openvscode-server/commits/gp-code/main)
+          cd components/ide/code
+          leeway build -Dversion=nightly -DimageRepoBase=ap.gcr.io/bhojpur/build -DcodeCommit=$headCommit .:docker
