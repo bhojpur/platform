@@ -17,14 +17,14 @@ jobs:
       - run: |
           export PR_BRANCH=$(date '+rq/changelog_%Y%m%d%H%M')
           git checkout -b $PR_BRANCH
-          /app/changelog update -t $TOKEN -o gitpod-io -r bhojpur -b $GITHUB_REF
+          /app/changelog update -t $TOKEN -o bhojpur -r platform -b $GITHUB_REF
           if [[ $(git status --porcelain) ]]; then
             git config --global user.name $GITHUB_USER
             git config --global user.email $GITHUB_EMAIL
             git add CHANGELOG.md
             git commit -m "[changelog] updated changelog"
             git push origin $PR_BRANCH
-            /app/changelog pr -t $TOKEN -o gitpod-io -r gitpod -b $GITHUB_REF -H $PR_BRANCH
+            /app/changelog pr -t $TOKEN -o bhojpur -r platform -b $GITHUB_REF -H $PR_BRANCH
           fi
         env:
           GITHUB_USER: shashi-rai
