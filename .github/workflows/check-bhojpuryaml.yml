@@ -1,0 +1,24 @@
+name: Check bhojpur.yaml changes
+on:
+  push:
+    paths:
+      - ".bhojpur.yml"
+      - ".github/workflows/check-bhojpuryaml.yml"
+  pull_request:
+    paths:
+      - ".bhojpur.yml"
+      - ".github/workflows/check-bhojpuryaml.yml"
+
+jobs:
+  notify:
+    name: Build and upload model
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          pull_number=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
+          curl -s -H "Authorization: token ${GITHUB_TOKEN}" \
+          -X POST -d '{"body": ":warning: Hey reviewer! BE CAREFUL :warning: \n Review the code before opening in your Bhojpur.NET Platform. .bhojpur.yaml was changed and it might be harmful."}' \
+          "https://api.github.com/repos/bhojpur/platform/issues/${pull_number}/comments"
