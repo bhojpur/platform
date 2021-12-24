@@ -1,7 +1,7 @@
 # The Bhojpur.NET Platform
 The Bhojpur.NET Platform automates the provisioning of ready-to-use Network, Security, and IT applications and services. It is used primarily to host different software-as-a-service offerings. Such hosted applications or services could be managed remotely using secure Web Service APIs. The platform allows efficient use of cluster server resources by deployed aplications.
 
-It is the primary software delivery platform of the [Bhojpur Consulting](https://www.bhojpur-consulting.com) to their clients globally. [Learn more 👉](https://www.bhojpur.net)
+It is the primary software delivery platform of the [Bhojpur Consulting](https://www.bhojpur-consulting.com) used by their clients globally. [Learn more 👉](https://www.bhojpur.net)
 
 The Bhojpur.NET Platform is provided as a [managed SaaS version](https://bhojpur.net) with a free subscription for open-source or a [free self-hosted version](https://www.bhojpur.net/self-hosted). An enterprise license is available [here](https://www.bhojpur.net/self-hosted).
 
