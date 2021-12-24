@@ -1,0 +1,57 @@
+version: '3'
+services:
+
+  bhojpur:
+    image: gcr.io/bhojpur/self-hosted/bhojpur-k3s:${VERSION:-latest}
+    command: --flannel-backend=none --disable-network-policy
+    privileged: true
+    volumes:
+      - ./calico.yaml:/var/lib/rancher/k3s/server/manifests/calico.yaml
+      - bhojpur-docker:/var/bhojpur/docker
+      - bhojpur-docker-registry:/var/bhojpur/docker-registry
+      - bhojpur-minio:/var/bhojpur/minio
+      - bhojpur-mysql:/var/bhojpur/mysql
+      - bhojpur-applications:/var/bhojpur/applications
+      - ./values:/values
+      - ./certs:/certs
+    ports:
+      - 443:443
+      - 80:80
+    environment:
+      - DOMAIN=${DOMAIN}
+      - K3S_CLUSTER_SECRET=qWo6sn3VWERh3dBBQniPLTqtZzEHURsriJNhTqus
+      - K3S_NODE_NAME=main
+      - REMOVE_NETWORKPOLICIES=true
+
+  node1:
+    image: rancher/k3s:v1.20.0-k3s2
+    privileged: true
+    volumes:
+      - bhojpur-applications-node1:/var/bhojpur/applications
+      - ./node-entrypoint.sh:/entrypoint
+    environment:
+      - K3S_URL=https://bhojpur:6443
+      - K3S_CLUSTER_SECRET=qWo6sn3VWERh3dBBQniPLTqtZzEHURsriJNhTqus
+      - K3S_NODE_NAME=node1
+    entrypoint: /entrypoint
+
+  node2:
+    image: rancher/k3s:v1.20.0-k3s2
+    privileged: true
+    volumes:
+      - bhojpur-applications-node2:/var/bhojpur/applications
+      - ./node-entrypoint.sh:/entrypoint
+    environment:
+      - K3S_URL=https://bhojpur:6443
+      - K3S_CLUSTER_SECRET=qWo6sn3VWERh3dBBQniPLTqtZzEHURsriJNhTqus
+      - K3S_NODE_NAME=node2
+    entrypoint: /entrypoint
+
+volumes:
+  bhojpur-docker:
+  bhojpur-docker-registry:
+  bhojpur-minio:
+  bhojpur-mysql:
+  bhojpur-applications:
+  bhojpur-applications-node1:
+  bhojpur-applications-node2:
