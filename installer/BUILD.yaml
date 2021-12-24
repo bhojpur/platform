@@ -52,6 +52,6 @@ packages:
     argdeps:
       - imageRepoBase
     config:
-      dockerfile: leeway.Dockerfile
+      dockerfile: gorpa.Dockerfile
       image:
         - ${imageRepoBase}/installer:${version}
