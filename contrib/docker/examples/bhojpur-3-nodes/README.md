@@ -20,7 +20,7 @@ your HTTPS certs, and run `docker-compose up`.
           image: rancher/k3s:v1.20.0-k3s2
           privileged: true
           volumes:
-            - bhojpur-applicaitons-node3:/var/bhojpur/applications
+            - bhojpur-applications-node3:/var/bhojpur/applications
             - ./node-entrypoint.sh:/entrypoint
           environment:
             - DOMAIN=${DOMAIN}
