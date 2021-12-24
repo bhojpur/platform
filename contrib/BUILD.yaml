@@ -1,0 +1,8 @@
+packages:
+  - name: all
+    type: generic
+    argdeps:
+      - version
+    deps:
+      - contrib/docker/examples/bhojpur-gitlab/gitlab:docker
+      - contrib/docker/bhojpur-image:docker
