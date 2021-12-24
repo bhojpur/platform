@@ -1,9 +1,11 @@
 # The Bhojpur.NET Platform
-The Bhojpur.NET Platform automates the provisioning of ready-to-use Network, Security, and IT applications and services. It is used primarily to host different software-as-a-service offerings. Such hosted applications or services could be managed remotely using secure Web Service APIs. The platform allows efficient use of cluster server resources by deployed aplications.
+The Bhojpur.NET Platform automates the provisioning of ready-to-use Network, Security, and IT applications and services. It is used primarily to host different software-as-a-service offerings. Such hosted applications or services could be managed remotely using secure Web Service APIs. The platform allows efficient use of cluster server resources by deployed applications or services.
 
-It is the primary software delivery platform of the [Bhojpur Consulting](https://www.bhojpur-consulting.com) used by their clients globally. [Learn more 👉](https://www.bhojpur.net)
+The Bhojpur.NET Platform is provided as a [managed SaaS version](https://www.bhojpur.net) with a free subscription with open source-code or a [free self-hosted version](https://docs.bhojpur.net/self-hosted). An enterprise license is available [here](https://docs.bhojpur.net/self-hosted).
 
-The Bhojpur.NET Platform is provided as a [managed SaaS version](https://bhojpur.net) with a free subscription for open-source or a [free self-hosted version](https://www.bhojpur.net/self-hosted). An enterprise license is available [here](https://www.bhojpur.net/self-hosted).
+A wide range of custom built enterprise-grade or communication service provider ready multi-tenant applications, network, and security services with more advanced management capabilities are available to paid subscribers only in a self-hosted deployment. However, such applications or services are optional. You could easily run core Bhojpur.NET Platform without any need to deploy such optional components.
+
+The Bhojpur.NET Platform is the primary software delivery engine of the [Bhojpur Consulting](https://www.bhojpur-consulting.com). It used by their clients globally to run different kind of workloads efficiently. [Learn more 👉](https://www.bhojpur.net)
 
 ## Getting Started
 
