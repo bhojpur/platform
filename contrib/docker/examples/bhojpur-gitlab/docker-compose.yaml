@@ -1,0 +1,54 @@
+version: '3'
+services:
+
+  proxy:
+    image: nginx
+    volumes:
+      - ./certs:/etc/nginx/certs
+      - ./proxy/default.conf:/etc/nginx/templates/default.conf.template
+    ports:
+      - 443:443
+    environment:
+      - BASEDOMAIN=${BASEDOMAIN}
+    depends_on:
+      - bhojpur
+      - gitlab
+
+  bhojpur:
+    image: ap.gcr.io/bhojpur/build/bhojpur-k3s:${VERSION:-latest}
+    privileged: true
+    volumes:
+      - bhojpur-docker:/var/bhojpur/docker
+      - bhojpur-docker-registry:/var/bhojpur/docker-registry
+      - bhojpur-minio:/var/bhojpur/minio
+      - bhojpur-mysql:/var/bhojpur/mysql
+      - bhojpur-applications:/var/bhojpur/applications
+      - ./values:/values
+      - ./certs:/certs
+    environment:
+      - BASEDOMAIN=${BASEDOMAIN}
+
+  gitlab:
+    image: ap.gcr.io/bhojpur/build/gitlab-k3s:${VERSION:-latest}
+    privileged: true
+    volumes:
+      - gitlab-gitaly:/var/gitlab/gitaly
+      - gitlab-minio:/var/gitlab/minio
+      - gitlab-postgresql:/var/gitlab/postgresql
+      - gitlab-redis:/var/gitlab/redis
+      - gitlab-secrets-backup:/var/gitlab/secrets-backup
+      - ./certs:/certs
+    environment:
+      - BASEDOMAIN=${BASEDOMAIN}
+
+volumes:
+  bhojpur-docker:
+  bhojpur-docker-registry:
+  bhojpur-minio:
+  bhojpur-mysql:
+  bhojpur-applications:
+  gitlab-gitaly:
+  gitlab-minio:
+  gitlab-postgresql:
+  gitlab-redis:
+  gitlab-secrets-backup:
