@@ -1,0 +1,62 @@
+# Copyright (c) 2018 Bhojpur Consulting Private Limited, India. All rights reserved.
+# Licensed under the MIT License. See License-MIT.txt in the project root for license information.
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: bhojpur-helm-installer
+spec:
+    containers:
+      - name: bhojpur-helm-installer
+        image: $HELMIMAGE
+        volumeMounts:
+          - name: kubeconfig
+            mountPath: /root/.kube/config
+          - name: installfiles
+            mountPath: /root/install
+          - name: chart
+            mountPath: /root/chart
+        command: ["sh", "/root/install/command.sh"]
+    volumes:
+      - name: kubeconfig
+        hostPath:
+          path: /etc/rancher/k3s/k3s_.yaml
+      - name: installfiles
+        configMap:
+          name: bhojpur-helm-installer
+      - name: chart
+        hostPath:
+          path: /chart
+    restartPolicy: OnFailure
+    nodeSelector:
+      bhojpur.net/main-node: "true"
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: bhojpur-helm-installer
+data:
+  command.sh: |-
+    #!/bin/sh
+    set -eux
+    echo ""
+    echo "values.yaml file:"
+    cat /root/install/values.yaml
+    echo ""
+    if [ -z "$(ls /root/chart)" ]; then
+      echo "Installing Bhojpur.NET Platform from charts.bhojpur.net"
+      helm repo add bhojpur https://charts.bhojpur.net
+      helm repo update
+      helm install bhojpur bhojpur/bhojpur --timeout 60m --values /root/install/values.yaml
+    else
+      echo "Installing Bhojpur.NET Platform from local chart folder"
+      cd /root/chart
+      helm dependency update
+      helm install bhojpur . --timeout 60m --values /root/install/values.yaml
+    fi
+    echo ""
+    echo "Done"
+  values.yaml: |-
+    # values.yaml added by Docker entrypoint.sh
