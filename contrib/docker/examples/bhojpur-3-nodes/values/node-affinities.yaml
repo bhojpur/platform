@@ -1,0 +1,22 @@
+affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: bhojpur.net/main-node
+          operator: In
+          values:
+          - "true"
+components:
+  application:
+    affinity:
+      default: "bhojpur.net/workload_application"
+docker-registry:
+  nodeSelector:
+    bhojpur.net/main-node: "true"
+minio:
+  nodeSelector:
+    bhojpur.net/main-node: "true"
+mysql:
+  nodeSelector:
+    bhojpur.net/main-node: "true"
