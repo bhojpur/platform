@@ -1,4 +1,4 @@
-# this file makes this a leeway workspace
+# This file makes it a Bhojpur GoRPA application
 defaultTarget: components:all
 defaultArgs:
   coreYarnLockBase: ../..
