@@ -23,7 +23,7 @@ The process to install Bhojpur.NET Platform is described below:
 ### Option 1 - download a pre-built Bhojpur.NET Platform Installer
 
 ```shell
-docker create -ti --name installer ap.gcr.io/bhojpur/build/installer:$TAG
+docker create -ti --name installer us-west2-docker.pkg.dev/bhojpur/platform/build/installer:$TAG
 docker cp installer:/app/installer ./installer
 docker rm -f installer
 ```
@@ -32,7 +32,7 @@ docker rm -f installer
 
 ```shell
 # Get the versions
-docker run -it --rm ap.gcr.io/bhojpur/build/versions:$TAG cat /versions.yaml > versions.yaml
+docker run -it --rm us-west2-docker.pkg.dev/bhojpur/platform/build/versions:$TAG cat /versions.yaml > versions.yaml
 ```
 
 For every command below, replace `installer` with `go run . --debug-version-file ./versions.yaml`.
