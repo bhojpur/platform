@@ -14,4 +14,4 @@ mockgen \
 
 mv mock.go_tmp mock.go
 
-leeway run components:update-license-header
+gorpa run components:update-license-header
