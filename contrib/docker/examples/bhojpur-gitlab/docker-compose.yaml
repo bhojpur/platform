@@ -15,7 +15,7 @@ services:
       - gitlab
 
   bhojpur:
-    image: ap.gcr.io/bhojpur/build/bhojpur-k3s:${VERSION:-latest}
+    image: us-west2-docker.pkg.dev/bhojpur/platform/build/bhojpur-k3s:${VERSION:-latest}
     privileged: true
     volumes:
       - bhojpur-docker:/var/bhojpur/docker
@@ -29,7 +29,7 @@ services:
       - BASEDOMAIN=${BASEDOMAIN}
 
   gitlab:
-    image: ap.gcr.io/bhojpur/build/gitlab-k3s:${VERSION:-latest}
+    image: us-west2-docker.pkg.dev/bhojpur/platform/build/gitlab-k3s:${VERSION:-latest}
     privileged: true
     volumes:
       - gitlab-gitaly:/var/gitlab/gitaly
