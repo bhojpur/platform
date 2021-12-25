@@ -1,7 +1,7 @@
 # Bhojpur.NET Platform - Self-Hosted
 
-The [Bhojpur.NET Platform](https://bhojpur.net) is a software-as-a-service hosting environment that provides a tenant
-with a ready-to-use Network, Security, and IT applications in the Cloud.
+The [Bhojpur.NET Platform](https://www.bhojpur.net) is a software-as-a-service hosting environment that provides a tenant
+with a ready-to-use Network, Security, and IT applications or services in the Cloud using a server cluster.
 
 This [Helm](https://helm.sh) chart allows you to deploy and operate an instance of the Bhojpur.NET Platform on your
 own Cloud-aware infrastructure.
