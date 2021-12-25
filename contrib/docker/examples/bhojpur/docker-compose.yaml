@@ -2,7 +2,7 @@ version: '3'
 services:
 
   gitpod:
-    image: gcr.io/bhojpur/self-hosted/bhojpur-k3s:${VERSION:-latest}
+    image: us-west2-docker.pkg.dev/bhojpur/platform/self-hosted/bhojpur-k3s:${VERSION:-latest}
     privileged: true
     volumes:
       - ./values:/values
