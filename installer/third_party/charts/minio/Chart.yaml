@@ -3,7 +3,7 @@
 # See License-AGPL.txt in the project root for license information.
 
 apiVersion: v2
-description: Bhojpur Minio
+description: Bhojpur MinIO
 name: minio
 version: 1.0.0
 dependencies:
