@@ -9,7 +9,7 @@ import (
 	"github.com/bhojpur/platform/installer/pkg/common"
 	agentsmith "github.com/bhojpur/platform/installer/pkg/components/agent-smith"
 	"github.com/bhojpur/platform/installer/pkg/components/proxy"
-	wsdaemon "github.com/bhojpur/platform/installer/pkg/components/ws-daemon"
+	wsdaemon "github.com/bhojpur/platform/installer/pkg/components/bp-daemon"
 	networkingv1 "k8s.io/api/networking/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
