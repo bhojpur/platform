@@ -37,11 +37,11 @@ flags:
       - components/ee/kedge/
   components-ee-ws-scheduler-app:
     paths:
-      - components/ee/ws-scheduler/
-  components-gitpod-cli-app:
+      - components/ee/bp-scheduler/
+  components-bhojpur-cli-app:
     paths:
       - components/bhojpur-cli/
-  components-gitpod-protocol-go-lib:
+  components-bhojpur-protocol-go-lib:
     paths:
       - components/bhojpur-protocol/go/
   components-image-builder-app:
@@ -74,24 +74,24 @@ flags:
   components-applicationkit-app:
     paths:
       - components/applicationkit/
-  components-ws-daemon-api-go-lib:
+  components-bp-daemon-api-go-lib:
     paths:
-      - components/ws-daemon-api/go/
-  components-ws-daemon-nsinsider-app:
+      - components/bp-daemon-api/go/
+  components-bp-daemon-nsinsider-app:
     paths:
-      - components/ws-daemon/nsinsider/
-  components-ws-daemon-seccomp-profile-installer-app:
+      - components/bp-daemon/nsinsider/
+  components-bp-daemon-seccomp-profile-installer-app:
     paths:
-      - components/ws-daemon/seccomp-profile-installer/
+      - components/bp-daemon/seccomp-profile-installer/
   components-ws-daemon-app:
     paths:
-      - components/ws-daemon/
-  components-ws-manager-bridge-app:
+      - components/bp-daemon/
+  components-bp-manager-bridge-app:
     paths:
-      - components/ws-manager-bridge/
-  components-ws-manager-app:
+      - components/bp-manager-bridge/
+  components-bp-manager-app:
     paths:
-      - components/ws-manager/
+      - components/bp-manager/
   dev-blowtorch-app:
     paths:
       - dev/blowtorch/
