@@ -110,7 +110,7 @@ branding:
       - name: Blog
         url: https://blog.bhojpur-consulting.com/
       - name: Community
-        url: https://community.bhojpur-consulting.com/
+        url: https://desk.bhojpur-consulting.com/
     footer:
       - name: Docs
         url: https://docs.bhojpur-consulting.com/
@@ -279,7 +279,7 @@ components:
       kind: deployment
     - name: registry-facade
       kind: daemonset
-    - name: ws-proxy
+    - name: bp-proxy
       kind: deployment
 
   server:
@@ -391,26 +391,26 @@ components:
       imageName: "platform-full"
       version: "latest"
     cmsImage:
-      imageName: "apps/cms"
+      imageName: "platform-cms"
     dcpImage:
-      imageName: "apps/dcp"
+      imageName: "platform-dcp"
       stableVersion: "commit-0d1e8cc5dcc8ccb38efcc2cd6404316b6e7bf4e9"
       insidersVersion: "nightly"
     saasImages:
       appDCP:
-        imageName: "apps/dcp"
+        imageName: "platform-dcp"
       appSCM:
-        imageName: "apps/scm"
+        imageName: "platform-scm"
       appCRM:
-        imageName: "apps/crm"
+        imageName: "platform-crm"
       appERP:
-        imageName: "apps/erp"
+        imageName: "platform-erp"
       appSRM:
-        imageName: "apps/srm"
+        imageName: "platform-srm"
       appODE:
-        imageName: "apps/ode"
+        imageName: "platform-ode"
       appQVM:
-        imageName: "apps/qvm"
+        imageName: "platform-qvm"
     supervisor:
       imageName: "supervisor"
     applicationkit:
@@ -475,25 +475,25 @@ components:
     enableRedis: true
     redisMaxMemory: 100mb
 
-  wsManager:
-    name: "ws-manager"
+  bpManager:
+    name: "bp-manager"
     dependsOn:
-    - "ws-manager-configmap.yaml"
+    - "bp-manager-configmap.yaml"
     resources:
       cpu: 100m
       memory: 32Mi
     tls:
       server:
-        secretName: ws-manager-tls
+        secretName: bp-manager-tls
       client:
-        secretName: ws-manager-client-tls
+        secretName: bp-manager-client-tls
     ports:
       rpc:
         expose: true
         containerPort: 8080
 
-  wsManagerBridge:
-    name: "ws-manager-bridge"
+  bpManagerBridge:
+    name: "bp-manager-bridge"
     defaultConfig: true
     resources:
       cpu: 100m
@@ -503,10 +503,10 @@ components:
         expose: false
         containerPort: 9500
 
-  wsDaemon:
-    name: "ws-daemon"
-    # Use an initContainer to use local SSDs to setup a RAID0 for the application area
-    # The raid skips the first two disks (/dev/sda and /dev/sdb), i.e., we can use up to six disks.
+  bpDaemon:
+    name: "bp-daemon"
+    # Use an initContainer to use local SSDs to setup a RAID0 for the Bhojpur.NET Platform application area
+    # The RAID skips the first two disks (/dev/sda and /dev/sdb), i.e., we can use up to six disks.
     setupSSDRaid: false
     hostApplicationArea: /var/bhojpur/applications
     servicePort: 8080
@@ -539,8 +539,8 @@ components:
         enabled: true
         imageName: "seccomp-profile-installer"
 
-  wsScheduler:
-    name: "ws-scheduler"
+  bpScheduler:
+    name: "bp-scheduler"
     disabled: false
     resources:
       cpu: 100m
@@ -560,14 +560,14 @@ components:
         constant:
           setpoint: 5
 
-  wsProxy:
-    name: "ws-proxy"
+  bpProxy:
+    name: "bp-proxy"
     disabled: false
     resources:
       cpu: 100m
       memory: 64Mi
     replicas: 1
-    hostHeader: "x-wsproxy-host"
+    hostHeader: "x-bpproxy-host"
     ports:
       httpProxy:
         expose: true
