@@ -263,7 +263,7 @@ func ConnectToServer(endpoint string, opts ConnectToServerOpts) (*APIoverJSONRPC
 	return &res, nil
 }
 
-// APIoverJSONRPC makes JSON RPC calls to the Bhojpur server is the APIoverJSONRPC message type
+// APIoverJSONRPC makes JSON RPC calls to the Bhojpur.NET Platform server is the APIoverJSONRPC message type
 type APIoverJSONRPC struct {
 	C   jsonrpc2.JSONRPC2
 	log *logrus.Entry
@@ -273,12 +273,12 @@ type APIoverJSONRPC struct {
 }
 
 // Close closes the connection
-func (gp *APIoverJSONRPC) Close() (err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) Close() (err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
-	e1 := gp.C.Close()
+	e1 := bp.C.Close()
 	if e1 != nil {
 		return e1
 	}
@@ -287,37 +287,37 @@ func (gp *APIoverJSONRPC) Close() (err error) {
 
 // InstanceUpdates subscribes to application instance updates until the context is canceled or the application
 // instance is stopped.
-func (gp *APIoverJSONRPC) InstanceUpdates(ctx context.Context, instanceID string) (<-chan *ApplicationInstance, error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) InstanceUpdates(ctx context.Context, instanceID string) (<-chan *ApplicationInstance, error) {
+	if bp == nil {
 		return nil, errNotConnected
 	}
 	chn := make(chan *ApplicationInstance)
 
-	gp.mu.Lock()
-	if gp.subs == nil {
-		gp.subs = make(map[string]map[chan *ApplicationInstance]struct{})
+	bp.mu.Lock()
+	if bp.subs == nil {
+		bp.subs = make(map[string]map[chan *ApplicationInstance]struct{})
 	}
-	if sub, ok := gp.subs[instanceID]; ok {
+	if sub, ok := bp.subs[instanceID]; ok {
 		sub[chn] = struct{}{}
 	} else {
-		gp.subs[instanceID] = map[chan *ApplicationInstance]struct{}{chn: {}}
+		bp.subs[instanceID] = map[chan *ApplicationInstance]struct{}{chn: {}}
 	}
-	gp.mu.Unlock()
+	bp.mu.Unlock()
 
 	go func() {
 		<-ctx.Done()
 
-		gp.mu.Lock()
-		delete(gp.subs[instanceID], chn)
+		bp.mu.Lock()
+		delete(bp.subs[instanceID], chn)
 		close(chn)
-		gp.mu.Unlock()
+		bp.mu.Unlock()
 	}()
 
 	return chn, nil
 }
 
-func (gp *APIoverJSONRPC) handler(ctx context.Context, conn *jsonrpc2.Conn, req *jsonrpc2.Request) (result interface{}, err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) handler(ctx context.Context, conn *jsonrpc2.Conn, req *jsonrpc2.Request) (result interface{}, err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
@@ -328,19 +328,19 @@ func (gp *APIoverJSONRPC) handler(ctx context.Context, conn *jsonrpc2.Conn, req 
 	var instance ApplicationInstance
 	err = json.Unmarshal(*req.Params, &instance)
 	if err != nil {
-		gp.log.WithError(err).WithField("raw", string(*req.Params)).Error("cannot unmarshal instance update")
+		bp.log.WithError(err).WithField("raw", string(*req.Params)).Error("cannot unmarshal instance update")
 		return
 	}
 
-	gp.mu.RLock()
-	defer gp.mu.RUnlock()
-	for chn := range gp.subs[instance.ID] {
+	bp.mu.RLock()
+	defer bp.mu.RUnlock()
+	for chn := range bp.subs[instance.ID] {
 		select {
 		case chn <- &instance:
 		default:
 		}
 	}
-	for chn := range gp.subs[""] {
+	for chn := range bp.subs[""] {
 		select {
 		case chn <- &instance:
 		default:
@@ -351,8 +351,8 @@ func (gp *APIoverJSONRPC) handler(ctx context.Context, conn *jsonrpc2.Conn, req 
 }
 
 // AdminBlockUser calls adminBlockUser on the server
-func (gp *APIoverJSONRPC) AdminBlockUser(ctx context.Context, message *AdminBlockUserRequest) (err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) AdminBlockUser(ctx context.Context, message *AdminBlockUserRequest) (err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
@@ -360,7 +360,7 @@ func (gp *APIoverJSONRPC) AdminBlockUser(ctx context.Context, message *AdminBloc
 	_params = append(_params, message)
 
 	var _result interface{}
-	err = gp.C.Call(ctx, "adminBlockUser", _params, &_result)
+	err = bp.C.Call(ctx, "adminBlockUser", _params, &_result)
 	if err != nil {
 		return err
 	}
@@ -368,15 +368,15 @@ func (gp *APIoverJSONRPC) AdminBlockUser(ctx context.Context, message *AdminBloc
 }
 
 // GetLoggedInUser calls getLoggedInUser on the server
-func (gp *APIoverJSONRPC) GetLoggedInUser(ctx context.Context) (res *User, err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) GetLoggedInUser(ctx context.Context) (res *User, err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
 	var _params []interface{}
 
 	var result User
-	err = gp.C.Call(ctx, "getLoggedInUser", _params, &result)
+	err = bp.C.Call(ctx, "getLoggedInUser", _params, &result)
 	if err != nil {
 		return
 	}
@@ -386,8 +386,8 @@ func (gp *APIoverJSONRPC) GetLoggedInUser(ctx context.Context) (res *User, err e
 }
 
 // UpdateLoggedInUser calls updateLoggedInUser on the server
-func (gp *APIoverJSONRPC) UpdateLoggedInUser(ctx context.Context, user *User) (res *User, err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) UpdateLoggedInUser(ctx context.Context, user *User) (res *User, err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
@@ -396,7 +396,7 @@ func (gp *APIoverJSONRPC) UpdateLoggedInUser(ctx context.Context, user *User) (r
 	_params = append(_params, user)
 
 	var result User
-	err = gp.C.Call(ctx, "updateLoggedInUser", _params, &result)
+	err = bp.C.Call(ctx, "updateLoggedInUser", _params, &result)
 	if err != nil {
 		return
 	}
@@ -406,15 +406,15 @@ func (gp *APIoverJSONRPC) UpdateLoggedInUser(ctx context.Context, user *User) (r
 }
 
 // GetAuthProviders calls getAuthProviders on the server
-func (gp *APIoverJSONRPC) GetAuthProviders(ctx context.Context) (res []*AuthProviderInfo, err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) GetAuthProviders(ctx context.Context) (res []*AuthProviderInfo, err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
 	var _params []interface{}
 
 	var result []*AuthProviderInfo
-	err = gp.C.Call(ctx, "getAuthProviders", _params, &result)
+	err = bp.C.Call(ctx, "getAuthProviders", _params, &result)
 	if err != nil {
 		return
 	}
@@ -424,15 +424,15 @@ func (gp *APIoverJSONRPC) GetAuthProviders(ctx context.Context) (res []*AuthProv
 }
 
 // GetOwnAuthProviders calls getOwnAuthProviders on the server
-func (gp *APIoverJSONRPC) GetOwnAuthProviders(ctx context.Context) (res []*AuthProviderEntry, err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) GetOwnAuthProviders(ctx context.Context) (res []*AuthProviderEntry, err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
 	var _params []interface{}
 
 	var result []*AuthProviderEntry
-	err = gp.C.Call(ctx, "getOwnAuthProviders", _params, &result)
+	err = bp.C.Call(ctx, "getOwnAuthProviders", _params, &result)
 	if err != nil {
 		return
 	}
@@ -442,8 +442,8 @@ func (gp *APIoverJSONRPC) GetOwnAuthProviders(ctx context.Context) (res []*AuthP
 }
 
 // UpdateOwnAuthProvider calls updateOwnAuthProvider on the server
-func (gp *APIoverJSONRPC) UpdateOwnAuthProvider(ctx context.Context, params *UpdateOwnAuthProviderParams) (err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) UpdateOwnAuthProvider(ctx context.Context, params *UpdateOwnAuthProviderParams) (err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
@@ -451,7 +451,7 @@ func (gp *APIoverJSONRPC) UpdateOwnAuthProvider(ctx context.Context, params *Upd
 
 	_params = append(_params, params)
 
-	err = gp.C.Call(ctx, "updateOwnAuthProvider", _params, nil)
+	err = bp.C.Call(ctx, "updateOwnAuthProvider", _params, nil)
 	if err != nil {
 		return
 	}
@@ -460,8 +460,8 @@ func (gp *APIoverJSONRPC) UpdateOwnAuthProvider(ctx context.Context, params *Upd
 }
 
 // DeleteOwnAuthProvider calls deleteOwnAuthProvider on the server
-func (gp *APIoverJSONRPC) DeleteOwnAuthProvider(ctx context.Context, params *DeleteOwnAuthProviderParams) (err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) DeleteOwnAuthProvider(ctx context.Context, params *DeleteOwnAuthProviderParams) (err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
@@ -469,7 +469,7 @@ func (gp *APIoverJSONRPC) DeleteOwnAuthProvider(ctx context.Context, params *Del
 
 	_params = append(_params, params)
 
-	err = gp.C.Call(ctx, "deleteOwnAuthProvider", _params, nil)
+	err = bp.C.Call(ctx, "deleteOwnAuthProvider", _params, nil)
 	if err != nil {
 		return
 	}
@@ -478,15 +478,15 @@ func (gp *APIoverJSONRPC) DeleteOwnAuthProvider(ctx context.Context, params *Del
 }
 
 // GetBranding calls getBranding on the server
-func (gp *APIoverJSONRPC) GetBranding(ctx context.Context) (res *Branding, err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) GetBranding(ctx context.Context) (res *Branding, err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
 	var _params []interface{}
 
 	var result Branding
-	err = gp.C.Call(ctx, "getBranding", _params, &result)
+	err = bp.C.Call(ctx, "getBranding", _params, &result)
 	if err != nil {
 		return
 	}
@@ -496,15 +496,15 @@ func (gp *APIoverJSONRPC) GetBranding(ctx context.Context) (res *Branding, err e
 }
 
 // GetConfiguration calls getConfiguration on the server
-func (gp *APIoverJSONRPC) GetConfiguration(ctx context.Context) (res *Configuration, err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) GetConfiguration(ctx context.Context) (res *Configuration, err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
 	var _params []interface{}
 
 	var result Configuration
-	err = gp.C.Call(ctx, "getConfiguration", _params, &result)
+	err = bp.C.Call(ctx, "getConfiguration", _params, &result)
 	if err != nil {
 		return
 	}
@@ -514,8 +514,8 @@ func (gp *APIoverJSONRPC) GetConfiguration(ctx context.Context) (res *Configurat
 }
 
 // GetBhojpurTokenScopes calls getBhojpurTokenScopes on the server
-func (gp *APIoverJSONRPC) GetBhojpurTokenScopes(ctx context.Context, tokenHash string) (res []string, err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) GetBhojpurTokenScopes(ctx context.Context, tokenHash string) (res []string, err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
@@ -524,7 +524,7 @@ func (gp *APIoverJSONRPC) GetBhojpurTokenScopes(ctx context.Context, tokenHash s
 	_params = append(_params, tokenHash)
 
 	var result []string
-	err = gp.C.Call(ctx, "getBhojpurTokenScopes", _params, &result)
+	err = bp.C.Call(ctx, "getBhojpurTokenScopes", _params, &result)
 	if err != nil {
 		return
 	}
@@ -534,8 +534,8 @@ func (gp *APIoverJSONRPC) GetBhojpurTokenScopes(ctx context.Context, tokenHash s
 }
 
 // GetToken calls getToken on the server
-func (gp *APIoverJSONRPC) GetToken(ctx context.Context, query *GetTokenSearchOptions) (res *Token, err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) GetToken(ctx context.Context, query *GetTokenSearchOptions) (res *Token, err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
@@ -544,7 +544,7 @@ func (gp *APIoverJSONRPC) GetToken(ctx context.Context, query *GetTokenSearchOpt
 	_params = append(_params, query)
 
 	var result Token
-	err = gp.C.Call(ctx, "getToken", _params, &result)
+	err = bp.C.Call(ctx, "getToken", _params, &result)
 	if err != nil {
 		return
 	}
@@ -554,8 +554,8 @@ func (gp *APIoverJSONRPC) GetToken(ctx context.Context, query *GetTokenSearchOpt
 }
 
 // GetPortAuthenticationToken calls getPortAuthenticationToken on the server
-func (gp *APIoverJSONRPC) GetPortAuthenticationToken(ctx context.Context, applicationID string) (res *Token, err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) GetPortAuthenticationToken(ctx context.Context, applicationID string) (res *Token, err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
@@ -564,7 +564,7 @@ func (gp *APIoverJSONRPC) GetPortAuthenticationToken(ctx context.Context, applic
 	_params = append(_params, applicationID)
 
 	var result Token
-	err = gp.C.Call(ctx, "getPortAuthenticationToken", _params, &result)
+	err = bp.C.Call(ctx, "getPortAuthenticationToken", _params, &result)
 	if err != nil {
 		return
 	}
@@ -574,14 +574,14 @@ func (gp *APIoverJSONRPC) GetPortAuthenticationToken(ctx context.Context, applic
 }
 
 // DeleteAccount calls deleteAccount on the server
-func (gp *APIoverJSONRPC) DeleteAccount(ctx context.Context) (err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) DeleteAccount(ctx context.Context) (err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
 	var _params []interface{}
 
-	err = gp.C.Call(ctx, "deleteAccount", _params, nil)
+	err = bp.C.Call(ctx, "deleteAccount", _params, nil)
 	if err != nil {
 		return
 	}
@@ -590,15 +590,15 @@ func (gp *APIoverJSONRPC) DeleteAccount(ctx context.Context) (err error) {
 }
 
 // GetClientRegion calls getClientRegion on the server
-func (gp *APIoverJSONRPC) GetClientRegion(ctx context.Context) (res string, err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) GetClientRegion(ctx context.Context) (res string, err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
 	var _params []interface{}
 
 	var result string
-	err = gp.C.Call(ctx, "getClientRegion", _params, &result)
+	err = bp.C.Call(ctx, "getClientRegion", _params, &result)
 	if err != nil {
 		return
 	}
@@ -608,8 +608,8 @@ func (gp *APIoverJSONRPC) GetClientRegion(ctx context.Context) (res string, err 
 }
 
 // HasPermission calls hasPermission on the server
-func (gp *APIoverJSONRPC) HasPermission(ctx context.Context, permission *PermissionName) (res bool, err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) HasPermission(ctx context.Context, permission *PermissionName) (res bool, err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
@@ -618,7 +618,7 @@ func (gp *APIoverJSONRPC) HasPermission(ctx context.Context, permission *Permiss
 	_params = append(_params, permission)
 
 	var result bool
-	err = gp.C.Call(ctx, "hasPermission", _params, &result)
+	err = bp.C.Call(ctx, "hasPermission", _params, &result)
 	if err != nil {
 		return
 	}
@@ -628,8 +628,8 @@ func (gp *APIoverJSONRPC) HasPermission(ctx context.Context, permission *Permiss
 }
 
 // GetApplications calls getApplications on the server
-func (gp *APIoverJSONRPC) GetApplications(ctx context.Context, options *GetApplicationsOptions) (res []*ApplicationInfo, err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) GetApplications(ctx context.Context, options *GetApplicationsOptions) (res []*ApplicationInfo, err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
@@ -638,7 +638,7 @@ func (gp *APIoverJSONRPC) GetApplications(ctx context.Context, options *GetAppli
 	_params = append(_params, options)
 
 	var result []*ApplicationInfo
-	err = gp.C.Call(ctx, "getApplications", _params, &result)
+	err = bp.C.Call(ctx, "getApplications", _params, &result)
 	if err != nil {
 		return
 	}
@@ -648,8 +648,8 @@ func (gp *APIoverJSONRPC) GetApplications(ctx context.Context, options *GetAppli
 }
 
 // GetApplicationOwner calls getApplicationOwner on the server
-func (gp *APIoverJSONRPC) GetApplicationOwner(ctx context.Context, applicationID string) (res *UserInfo, err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) GetApplicationOwner(ctx context.Context, applicationID string) (res *UserInfo, err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
@@ -658,7 +658,7 @@ func (gp *APIoverJSONRPC) GetApplicationOwner(ctx context.Context, applicationID
 	_params = append(_params, applicationID)
 
 	var result UserInfo
-	err = gp.C.Call(ctx, "getApplicationOwner", _params, &result)
+	err = bp.C.Call(ctx, "getApplicationOwner", _params, &result)
 	if err != nil {
 		return
 	}
@@ -668,8 +668,8 @@ func (gp *APIoverJSONRPC) GetApplicationOwner(ctx context.Context, applicationID
 }
 
 // GetApplicationUsers calls getApplicationUsers on the server
-func (gp *APIoverJSONRPC) GetApplicationUsers(ctx context.Context, applicationID string) (res []*ApplicationInstanceUser, err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) GetApplicationUsers(ctx context.Context, applicationID string) (res []*ApplicationInstanceUser, err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
@@ -678,7 +678,7 @@ func (gp *APIoverJSONRPC) GetApplicationUsers(ctx context.Context, applicationID
 	_params = append(_params, applicationID)
 
 	var result []*ApplicationInstanceUser
-	err = gp.C.Call(ctx, "getApplicationUsers", _params, &result)
+	err = bp.C.Call(ctx, "getApplicationUsers", _params, &result)
 	if err != nil {
 		return
 	}
@@ -688,15 +688,15 @@ func (gp *APIoverJSONRPC) GetApplicationUsers(ctx context.Context, applicationID
 }
 
 // GetFeaturedRepositories calls getFeaturedRepositories on the server
-func (gp *APIoverJSONRPC) GetFeaturedRepositories(ctx context.Context) (res []*WhitelistedRepository, err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) GetFeaturedRepositories(ctx context.Context) (res []*WhitelistedRepository, err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
 	var _params []interface{}
 
 	var result []*WhitelistedRepository
-	err = gp.C.Call(ctx, "getFeaturedRepositories", _params, &result)
+	err = bp.C.Call(ctx, "getFeaturedRepositories", _params, &result)
 	if err != nil {
 		return
 	}
@@ -706,8 +706,8 @@ func (gp *APIoverJSONRPC) GetFeaturedRepositories(ctx context.Context) (res []*W
 }
 
 // GetApplication calls getApplication on the server
-func (gp *APIoverJSONRPC) GetApplication(ctx context.Context, id string) (res *ApplicationInfo, err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) GetApplication(ctx context.Context, id string) (res *ApplicationInfo, err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
@@ -716,7 +716,7 @@ func (gp *APIoverJSONRPC) GetApplication(ctx context.Context, id string) (res *A
 	_params = append(_params, id)
 
 	var result ApplicationInfo
-	err = gp.C.Call(ctx, "getApplication", _params, &result)
+	err = bp.C.Call(ctx, "getApplication", _params, &result)
 	if err != nil {
 		return
 	}
@@ -726,8 +726,8 @@ func (gp *APIoverJSONRPC) GetApplication(ctx context.Context, id string) (res *A
 }
 
 // IsApplicationOwner calls isApplicationOwner on the server
-func (gp *APIoverJSONRPC) IsApplicationOwner(ctx context.Context, applicationID string) (res bool, err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) IsApplicationOwner(ctx context.Context, applicationID string) (res bool, err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
@@ -736,7 +736,7 @@ func (gp *APIoverJSONRPC) IsApplicationOwner(ctx context.Context, applicationID 
 	_params = append(_params, applicationID)
 
 	var result bool
-	err = gp.C.Call(ctx, "isApplicationOwner", _params, &result)
+	err = bp.C.Call(ctx, "isApplicationOwner", _params, &result)
 	if err != nil {
 		return
 	}
@@ -746,8 +746,8 @@ func (gp *APIoverJSONRPC) IsApplicationOwner(ctx context.Context, applicationID 
 }
 
 // CreateApplication calls createApplication on the server
-func (gp *APIoverJSONRPC) CreateApplication(ctx context.Context, options *CreateApplicationOptions) (res *ApplicationCreationResult, err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) CreateApplication(ctx context.Context, options *CreateApplicationOptions) (res *ApplicationCreationResult, err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
@@ -756,7 +756,7 @@ func (gp *APIoverJSONRPC) CreateApplication(ctx context.Context, options *Create
 	_params = append(_params, options)
 
 	var result ApplicationCreationResult
-	err = gp.C.Call(ctx, "createApplication", _params, &result)
+	err = bp.C.Call(ctx, "createApplication", _params, &result)
 	if err != nil {
 		return
 	}
@@ -766,8 +766,8 @@ func (gp *APIoverJSONRPC) CreateApplication(ctx context.Context, options *Create
 }
 
 // StartApplication calls startApplication on the server
-func (gp *APIoverJSONRPC) StartApplication(ctx context.Context, id string, options *StartApplicationOptions) (res *StartApplicationResult, err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) StartApplication(ctx context.Context, id string, options *StartApplicationOptions) (res *StartApplicationResult, err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
@@ -777,7 +777,7 @@ func (gp *APIoverJSONRPC) StartApplication(ctx context.Context, id string, optio
 	_params = append(_params, options)
 
 	var result StartApplicationResult
-	err = gp.C.Call(ctx, "startApplication", _params, &result)
+	err = bp.C.Call(ctx, "startApplication", _params, &result)
 	if err != nil {
 		return
 	}
@@ -787,8 +787,8 @@ func (gp *APIoverJSONRPC) StartApplication(ctx context.Context, id string, optio
 }
 
 // StopApplication calls stopApplication on the server
-func (gp *APIoverJSONRPC) StopApplication(ctx context.Context, id string) (err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) StopApplication(ctx context.Context, id string) (err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
@@ -796,7 +796,7 @@ func (gp *APIoverJSONRPC) StopApplication(ctx context.Context, id string) (err e
 
 	_params = append(_params, id)
 
-	err = gp.C.Call(ctx, "stopApplication", _params, nil)
+	err = bp.C.Call(ctx, "stopApplication", _params, nil)
 	if err != nil {
 		return
 	}
@@ -805,8 +805,8 @@ func (gp *APIoverJSONRPC) StopApplication(ctx context.Context, id string) (err e
 }
 
 // DeleteApplication calls deleteApplication on the server
-func (gp *APIoverJSONRPC) DeleteApplication(ctx context.Context, id string) (err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) DeleteApplication(ctx context.Context, id string) (err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
@@ -814,7 +814,7 @@ func (gp *APIoverJSONRPC) DeleteApplication(ctx context.Context, id string) (err
 
 	_params = append(_params, id)
 
-	err = gp.C.Call(ctx, "deleteApplication", _params, nil)
+	err = bp.C.Call(ctx, "deleteApplication", _params, nil)
 	if err != nil {
 		return
 	}
@@ -823,8 +823,8 @@ func (gp *APIoverJSONRPC) DeleteApplication(ctx context.Context, id string) (err
 }
 
 // SetApplicationDescription calls setApplicationDescription on the server
-func (gp *APIoverJSONRPC) SetApplicationDescription(ctx context.Context, id string, desc string) (err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) SetApplicationDescription(ctx context.Context, id string, desc string) (err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
@@ -833,7 +833,7 @@ func (gp *APIoverJSONRPC) SetApplicationDescription(ctx context.Context, id stri
 	_params = append(_params, id)
 	_params = append(_params, desc)
 
-	err = gp.C.Call(ctx, "setApplicationDescription", _params, nil)
+	err = bp.C.Call(ctx, "setApplicationDescription", _params, nil)
 	if err != nil {
 		return
 	}
@@ -842,8 +842,8 @@ func (gp *APIoverJSONRPC) SetApplicationDescription(ctx context.Context, id stri
 }
 
 // ControlAdmission calls controlAdmission on the server
-func (gp *APIoverJSONRPC) ControlAdmission(ctx context.Context, id string, level *AdmissionLevel) (err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) ControlAdmission(ctx context.Context, id string, level *AdmissionLevel) (err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
@@ -852,7 +852,7 @@ func (gp *APIoverJSONRPC) ControlAdmission(ctx context.Context, id string, level
 	_params = append(_params, id)
 	_params = append(_params, level)
 
-	err = gp.C.Call(ctx, "controlAdmission", _params, nil)
+	err = bp.C.Call(ctx, "controlAdmission", _params, nil)
 	if err != nil {
 		return
 	}
@@ -861,8 +861,8 @@ func (gp *APIoverJSONRPC) ControlAdmission(ctx context.Context, id string, level
 }
 
 // WatchApplicationImageBuildLogs calls watchApplicationImageBuildLogs on the server
-func (gp *APIoverJSONRPC) WatchApplicationImageBuildLogs(ctx context.Context, applicationID string) (err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) WatchApplicationImageBuildLogs(ctx context.Context, applicationID string) (err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
@@ -870,7 +870,7 @@ func (gp *APIoverJSONRPC) WatchApplicationImageBuildLogs(ctx context.Context, ap
 
 	_params = append(_params, applicationID)
 
-	err = gp.C.Call(ctx, "watchApplicationImageBuildLogs", _params, nil)
+	err = bp.C.Call(ctx, "watchApplicationImageBuildLogs", _params, nil)
 	if err != nil {
 		return
 	}
@@ -879,8 +879,8 @@ func (gp *APIoverJSONRPC) WatchApplicationImageBuildLogs(ctx context.Context, ap
 }
 
 // IsPrebuildDone calls isPrebuildDone on the server
-func (gp *APIoverJSONRPC) IsPrebuildDone(ctx context.Context, pwsid string) (res bool, err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) IsPrebuildDone(ctx context.Context, pwsid string) (res bool, err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
@@ -889,7 +889,7 @@ func (gp *APIoverJSONRPC) IsPrebuildDone(ctx context.Context, pwsid string) (res
 	_params = append(_params, pwsid)
 
 	var result bool
-	err = gp.C.Call(ctx, "isPrebuildDone", _params, &result)
+	err = bp.C.Call(ctx, "isPrebuildDone", _params, &result)
 	if err != nil {
 		return
 	}
@@ -899,8 +899,8 @@ func (gp *APIoverJSONRPC) IsPrebuildDone(ctx context.Context, pwsid string) (res
 }
 
 // SetApplicationTimeout calls setApplicationTimeout on the server
-func (gp *APIoverJSONRPC) SetApplicationTimeout(ctx context.Context, applicationID string, duration *ApplicationTimeoutDuration) (res *SetApplicationTimeoutResult, err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) SetApplicationTimeout(ctx context.Context, applicationID string, duration *ApplicationTimeoutDuration) (res *SetApplicationTimeoutResult, err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
@@ -910,7 +910,7 @@ func (gp *APIoverJSONRPC) SetApplicationTimeout(ctx context.Context, application
 	_params = append(_params, duration)
 
 	var result SetApplicationTimeoutResult
-	err = gp.C.Call(ctx, "setApplicationTimeout", _params, &result)
+	err = bp.C.Call(ctx, "setApplicationTimeout", _params, &result)
 	if err != nil {
 		return
 	}
@@ -920,8 +920,8 @@ func (gp *APIoverJSONRPC) SetApplicationTimeout(ctx context.Context, application
 }
 
 // GetApplicationTimeout calls getApplicationTimeout on the server
-func (gp *APIoverJSONRPC) GetApplicationTimeout(ctx context.Context, ApplicationID string) (res *GetApplicationTimeoutResult, err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) GetApplicationTimeout(ctx context.Context, ApplicationID string) (res *GetApplicationTimeoutResult, err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
@@ -930,7 +930,7 @@ func (gp *APIoverJSONRPC) GetApplicationTimeout(ctx context.Context, Application
 	_params = append(_params, applicationID)
 
 	var result GetApplicationTimeoutResult
-	err = gp.C.Call(ctx, "getApplicationTimeout", _params, &result)
+	err = bp.C.Call(ctx, "getApplicationTimeout", _params, &result)
 	if err != nil {
 		return
 	}
@@ -940,8 +940,8 @@ func (gp *APIoverJSONRPC) GetApplicationTimeout(ctx context.Context, Application
 }
 
 // SendHeartBeat calls sendHeartBeat on the server
-func (gp *APIoverJSONRPC) SendHeartBeat(ctx context.Context, options *SendHeartBeatOptions) (err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) SendHeartBeat(ctx context.Context, options *SendHeartBeatOptions) (err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
@@ -949,7 +949,7 @@ func (gp *APIoverJSONRPC) SendHeartBeat(ctx context.Context, options *SendHeartB
 
 	_params = append(_params, options)
 
-	err = gp.C.Call(ctx, "sendHeartBeat", _params, nil)
+	err = bp.C.Call(ctx, "sendHeartBeat", _params, nil)
 	if err != nil {
 		return
 	}
@@ -958,8 +958,8 @@ func (gp *APIoverJSONRPC) SendHeartBeat(ctx context.Context, options *SendHeartB
 }
 
 // UpdateApplicationUserPin calls updateApplicationUserPin on the server
-func (gp *APIoverJSONRPC) UpdateApplicationUserPin(ctx context.Context, id string, action *PinAction) (err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) UpdateApplicationUserPin(ctx context.Context, id string, action *PinAction) (err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
@@ -968,7 +968,7 @@ func (gp *APIoverJSONRPC) UpdateApplicationUserPin(ctx context.Context, id strin
 	_params = append(_params, id)
 	_params = append(_params, action)
 
-	err = gp.C.Call(ctx, "updateApplicationUserPin", _params, nil)
+	err = bp.C.Call(ctx, "updateApplicationUserPin", _params, nil)
 	if err != nil {
 		return
 	}
@@ -977,8 +977,8 @@ func (gp *APIoverJSONRPC) UpdateApplicationUserPin(ctx context.Context, id strin
 }
 
 // GetOpenPorts calls getOpenPorts on the server
-func (gp *APIoverJSONRPC) GetOpenPorts(ctx context.Context, applicationID string) (res []*ApplicationInstancePort, err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) GetOpenPorts(ctx context.Context, applicationID string) (res []*ApplicationInstancePort, err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
@@ -987,7 +987,7 @@ func (gp *APIoverJSONRPC) GetOpenPorts(ctx context.Context, applicationID string
 	_params = append(_params, applicationID)
 
 	var result []*ApplicationInstancePort
-	err = gp.C.Call(ctx, "getOpenPorts", _params, &result)
+	err = bp.C.Call(ctx, "getOpenPorts", _params, &result)
 	if err != nil {
 		return
 	}
@@ -997,8 +997,8 @@ func (gp *APIoverJSONRPC) GetOpenPorts(ctx context.Context, applicationID string
 }
 
 // OpenPort calls openPort on the server
-func (gp *APIoverJSONRPC) OpenPort(ctx context.Context, applicationID string, port *ApplicationInstancePort) (res *ApplicationInstancePort, err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) OpenPort(ctx context.Context, applicationID string, port *ApplicationInstancePort) (res *ApplicationInstancePort, err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
@@ -1008,7 +1008,7 @@ func (gp *APIoverJSONRPC) OpenPort(ctx context.Context, applicationID string, po
 	_params = append(_params, port)
 
 	var result ApplicationInstancePort
-	err = gp.C.Call(ctx, "openPort", _params, &result)
+	err = bp.C.Call(ctx, "openPort", _params, &result)
 	if err != nil {
 		return
 	}
@@ -1018,8 +1018,8 @@ func (gp *APIoverJSONRPC) OpenPort(ctx context.Context, applicationID string, po
 }
 
 // ClosePort calls closePort on the server
-func (gp *APIoverJSONRPC) ClosePort(ctx context.Context, applicationID string, port float32) (err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) ClosePort(ctx context.Context, applicationID string, port float32) (err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
@@ -1028,7 +1028,7 @@ func (gp *APIoverJSONRPC) ClosePort(ctx context.Context, applicationID string, p
 	_params = append(_params, applicationID)
 	_params = append(_params, port)
 
-	err = gp.C.Call(ctx, "closePort", _params, nil)
+	err = bp.C.Call(ctx, "closePort", _params, nil)
 	if err != nil {
 		return
 	}
@@ -1037,8 +1037,8 @@ func (gp *APIoverJSONRPC) ClosePort(ctx context.Context, applicationID string, p
 }
 
 // GetUserStorageResource calls getUserStorageResource on the server
-func (gp *APIoverJSONRPC) GetUserStorageResource(ctx context.Context, options *GetUserStorageResourceOptions) (res string, err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) GetUserStorageResource(ctx context.Context, options *GetUserStorageResourceOptions) (res string, err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
@@ -1047,7 +1047,7 @@ func (gp *APIoverJSONRPC) GetUserStorageResource(ctx context.Context, options *G
 	_params = append(_params, options)
 
 	var result string
-	err = gp.C.Call(ctx, "getUserStorageResource", _params, &result)
+	err = bp.C.Call(ctx, "getUserStorageResource", _params, &result)
 	if err != nil {
 		return
 	}
@@ -1057,8 +1057,8 @@ func (gp *APIoverJSONRPC) GetUserStorageResource(ctx context.Context, options *G
 }
 
 // UpdateUserStorageResource calls updateUserStorageResource on the server
-func (gp *APIoverJSONRPC) UpdateUserStorageResource(ctx context.Context, options *UpdateUserStorageResourceOptions) (err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) UpdateUserStorageResource(ctx context.Context, options *UpdateUserStorageResourceOptions) (err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
@@ -1066,7 +1066,7 @@ func (gp *APIoverJSONRPC) UpdateUserStorageResource(ctx context.Context, options
 
 	_params = append(_params, options)
 
-	err = gp.C.Call(ctx, "updateUserStorageResource", _params, nil)
+	err = bp.C.Call(ctx, "updateUserStorageResource", _params, nil)
 	if err != nil {
 		return
 	}
@@ -1075,15 +1075,15 @@ func (gp *APIoverJSONRPC) UpdateUserStorageResource(ctx context.Context, options
 }
 
 // GetEnvVars calls getEnvVars on the server
-func (gp *APIoverJSONRPC) GetEnvVars(ctx context.Context) (res []*UserEnvVarValue, err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) GetEnvVars(ctx context.Context) (res []*UserEnvVarValue, err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
 	var _params []interface{}
 
 	var result []*UserEnvVarValue
-	err = gp.C.Call(ctx, "getEnvVars", _params, &result)
+	err = bp.C.Call(ctx, "getEnvVars", _params, &result)
 	if err != nil {
 		return
 	}
@@ -1093,8 +1093,8 @@ func (gp *APIoverJSONRPC) GetEnvVars(ctx context.Context) (res []*UserEnvVarValu
 }
 
 // SetEnvVar calls setEnvVar on the server
-func (gp *APIoverJSONRPC) SetEnvVar(ctx context.Context, variable *UserEnvVarValue) (err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) SetEnvVar(ctx context.Context, variable *UserEnvVarValue) (err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
@@ -1102,7 +1102,7 @@ func (gp *APIoverJSONRPC) SetEnvVar(ctx context.Context, variable *UserEnvVarVal
 
 	_params = append(_params, variable)
 
-	err = gp.C.Call(ctx, "setEnvVar", _params, nil)
+	err = bp.C.Call(ctx, "setEnvVar", _params, nil)
 	if err != nil {
 		return
 	}
@@ -1111,8 +1111,8 @@ func (gp *APIoverJSONRPC) SetEnvVar(ctx context.Context, variable *UserEnvVarVal
 }
 
 // DeleteEnvVar calls deleteEnvVar on the server
-func (gp *APIoverJSONRPC) DeleteEnvVar(ctx context.Context, variable *UserEnvVarValue) (err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) DeleteEnvVar(ctx context.Context, variable *UserEnvVarValue) (err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
@@ -1120,7 +1120,7 @@ func (gp *APIoverJSONRPC) DeleteEnvVar(ctx context.Context, variable *UserEnvVar
 
 	_params = append(_params, variable)
 
-	err = gp.C.Call(ctx, "deleteEnvVar", _params, nil)
+	err = bp.C.Call(ctx, "deleteEnvVar", _params, nil)
 	if err != nil {
 		return
 	}
@@ -1129,8 +1129,8 @@ func (gp *APIoverJSONRPC) DeleteEnvVar(ctx context.Context, variable *UserEnvVar
 }
 
 // GetContentBlobUploadURL calls getContentBlobUploadUrl on the server
-func (gp *APIoverJSONRPC) GetContentBlobUploadURL(ctx context.Context, name string) (url string, err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) GetContentBlobUploadURL(ctx context.Context, name string) (url string, err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
@@ -1139,7 +1139,7 @@ func (gp *APIoverJSONRPC) GetContentBlobUploadURL(ctx context.Context, name stri
 	_params = append(_params, name)
 
 	var result string
-	err = gp.C.Call(ctx, string(FunctionGetContentBlobUploadURL), _params, &result)
+	err = bp.C.Call(ctx, string(FunctionGetContentBlobUploadURL), _params, &result)
 	if err != nil {
 		return
 	}
@@ -1149,8 +1149,8 @@ func (gp *APIoverJSONRPC) GetContentBlobUploadURL(ctx context.Context, name stri
 }
 
 // GetContentBlobDownloadURL calls getContentBlobDownloadUrl on the server
-func (gp *APIoverJSONRPC) GetContentBlobDownloadURL(ctx context.Context, name string) (url string, err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) GetContentBlobDownloadURL(ctx context.Context, name string) (url string, err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
@@ -1159,7 +1159,7 @@ func (gp *APIoverJSONRPC) GetContentBlobDownloadURL(ctx context.Context, name st
 	_params = append(_params, name)
 
 	var result string
-	err = gp.C.Call(ctx, string(FunctionGetContentBlobDownloadURL), _params, &result)
+	err = bp.C.Call(ctx, string(FunctionGetContentBlobDownloadURL), _params, &result)
 	if err != nil {
 		return
 	}
@@ -1169,15 +1169,15 @@ func (gp *APIoverJSONRPC) GetContentBlobDownloadURL(ctx context.Context, name st
 }
 
 // GetBhojpurTokens calls getBhojpurTokens on the server
-func (gp *APIoverJSONRPC) GetBhojpurTokens(ctx context.Context) (res []*APIToken, err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) GetBhojpurTokens(ctx context.Context) (res []*APIToken, err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
 	var _params []interface{}
 
 	var result []*APIToken
-	err = gp.C.Call(ctx, "getBhojpurTokens", _params, &result)
+	err = bp.C.Call(ctx, "getBhojpurTokens", _params, &result)
 	if err != nil {
 		return
 	}
@@ -1187,8 +1187,8 @@ func (gp *APIoverJSONRPC) GetBhojpurTokens(ctx context.Context) (res []*APIToken
 }
 
 // GenerateNewBhojpurToken calls generateNewBhojpurToken on the server
-func (gp *APIoverJSONRPC) GenerateNewBhojpurToken(ctx context.Context, options *GenerateNewBhojpurTokenOptions) (res string, err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) GenerateNewBhojpurToken(ctx context.Context, options *GenerateNewBhojpurTokenOptions) (res string, err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
@@ -1197,7 +1197,7 @@ func (gp *APIoverJSONRPC) GenerateNewBhojpurToken(ctx context.Context, options *
 	_params = append(_params, options)
 
 	var result string
-	err = gp.C.Call(ctx, "generateNewBhojpurToken", _params, &result)
+	err = bp.C.Call(ctx, "generateNewBhojpurToken", _params, &result)
 	if err != nil {
 		return
 	}
@@ -1207,8 +1207,8 @@ func (gp *APIoverJSONRPC) GenerateNewBhojpurToken(ctx context.Context, options *
 }
 
 // DeleteBhojpurToken calls deleteBhojpurToken on the server
-func (gp *APIoverJSONRPC) DeleteBhojpurToken(ctx context.Context, tokenHash string) (err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) DeleteBhojpurToken(ctx context.Context, tokenHash string) (err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
@@ -1216,7 +1216,7 @@ func (gp *APIoverJSONRPC) DeleteBhojpurToken(ctx context.Context, tokenHash stri
 
 	_params = append(_params, tokenHash)
 
-	err = gp.C.Call(ctx, "deleteBhojpurToken", _params, nil)
+	err = bp.C.Call(ctx, "deleteBhojpurToken", _params, nil)
 	if err != nil {
 		return
 	}
@@ -1225,8 +1225,8 @@ func (gp *APIoverJSONRPC) DeleteBhojpurToken(ctx context.Context, tokenHash stri
 }
 
 // SendFeedback calls sendFeedback on the server
-func (gp *APIoverJSONRPC) SendFeedback(ctx context.Context, feedback string) (res string, err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) SendFeedback(ctx context.Context, feedback string) (res string, err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
@@ -1235,7 +1235,7 @@ func (gp *APIoverJSONRPC) SendFeedback(ctx context.Context, feedback string) (re
 	_params = append(_params, feedback)
 
 	var result string
-	err = gp.C.Call(ctx, "sendFeedback", _params, &result)
+	err = bp.C.Call(ctx, "sendFeedback", _params, &result)
 	if err != nil {
 		return
 	}
@@ -1245,8 +1245,8 @@ func (gp *APIoverJSONRPC) SendFeedback(ctx context.Context, feedback string) (re
 }
 
 // RegisterGithubApp calls registerGithubApp on the server
-func (gp *APIoverJSONRPC) RegisterGithubApp(ctx context.Context, installationID string) (err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) RegisterGithubApp(ctx context.Context, installationID string) (err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
@@ -1254,7 +1254,7 @@ func (gp *APIoverJSONRPC) RegisterGithubApp(ctx context.Context, installationID 
 
 	_params = append(_params, installationID)
 
-	err = gp.C.Call(ctx, "registerGithubApp", _params, nil)
+	err = bp.C.Call(ctx, "registerGithubApp", _params, nil)
 	if err != nil {
 		return
 	}
@@ -1263,8 +1263,8 @@ func (gp *APIoverJSONRPC) RegisterGithubApp(ctx context.Context, installationID 
 }
 
 // TakeSnapshot calls takeSnapshot on the server
-func (gp *APIoverJSONRPC) TakeSnapshot(ctx context.Context, options *TakeSnapshotOptions) (res string, err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) TakeSnapshot(ctx context.Context, options *TakeSnapshotOptions) (res string, err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
@@ -1273,7 +1273,7 @@ func (gp *APIoverJSONRPC) TakeSnapshot(ctx context.Context, options *TakeSnapsho
 	_params = append(_params, options)
 
 	var result string
-	err = gp.C.Call(ctx, "takeSnapshot", _params, &result)
+	err = bp.C.Call(ctx, "takeSnapshot", _params, &result)
 	if err != nil {
 		return
 	}
@@ -1283,8 +1283,8 @@ func (gp *APIoverJSONRPC) TakeSnapshot(ctx context.Context, options *TakeSnapsho
 }
 
 // WaitForSnapshot calls waitForSnapshot on the server
-func (gp *APIoverJSONRPC) WaitForSnapshot(ctx context.Context, snapshotId string) (err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) WaitForSnapshot(ctx context.Context, snapshotId string) (err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
@@ -1293,13 +1293,13 @@ func (gp *APIoverJSONRPC) WaitForSnapshot(ctx context.Context, snapshotId string
 	_params = append(_params, snapshotId)
 
 	var result string
-	err = gp.C.Call(ctx, "waitForSnapshot", _params, &result)
+	err = bp.C.Call(ctx, "waitForSnapshot", _params, &result)
 	return
 }
 
 // GetSnapshots calls getSnapshots on the server
-func (gp *APIoverJSONRPC) GetSnapshots(ctx context.Context, applicationID string) (res []*string, err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) GetSnapshots(ctx context.Context, applicationID string) (res []*string, err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
@@ -1308,7 +1308,7 @@ func (gp *APIoverJSONRPC) GetSnapshots(ctx context.Context, applicationID string
 	_params = append(_params, applicationID)
 
 	var result []*string
-	err = gp.C.Call(ctx, "getSnapshots", _params, &result)
+	err = bp.C.Call(ctx, "getSnapshots", _params, &result)
 	if err != nil {
 		return
 	}
@@ -1318,8 +1318,8 @@ func (gp *APIoverJSONRPC) GetSnapshots(ctx context.Context, applicationID string
 }
 
 // StoreLayout calls storeLayout on the server
-func (gp *APIoverJSONRPC) StoreLayout(ctx context.Context, applicationID string, layoutData string) (err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) StoreLayout(ctx context.Context, applicationID string, layoutData string) (err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
@@ -1328,7 +1328,7 @@ func (gp *APIoverJSONRPC) StoreLayout(ctx context.Context, applicationID string,
 	_params = append(_params, applicationID)
 	_params = append(_params, layoutData)
 
-	err = gp.C.Call(ctx, "storeLayout", _params, nil)
+	err = bp.C.Call(ctx, "storeLayout", _params, nil)
 	if err != nil {
 		return
 	}
@@ -1337,8 +1337,8 @@ func (gp *APIoverJSONRPC) StoreLayout(ctx context.Context, applicationID string,
 }
 
 // GetLayout calls getLayout on the server
-func (gp *APIoverJSONRPC) GetLayout(ctx context.Context, applicationID string) (res string, err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) GetLayout(ctx context.Context, applicationID string) (res string, err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
@@ -1347,7 +1347,7 @@ func (gp *APIoverJSONRPC) GetLayout(ctx context.Context, applicationID string) (
 	_params = append(_params, applicationID)
 
 	var result string
-	err = gp.C.Call(ctx, "getLayout", _params, &result)
+	err = bp.C.Call(ctx, "getLayout", _params, &result)
 	if err != nil {
 		return
 	}
@@ -1357,8 +1357,8 @@ func (gp *APIoverJSONRPC) GetLayout(ctx context.Context, applicationID string) (
 }
 
 // PreparePluginUpload calls preparePluginUpload on the server
-func (gp *APIoverJSONRPC) PreparePluginUpload(ctx context.Context, params *PreparePluginUploadParams) (res string, err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) PreparePluginUpload(ctx context.Context, params *PreparePluginUploadParams) (res string, err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
@@ -1367,7 +1367,7 @@ func (gp *APIoverJSONRPC) PreparePluginUpload(ctx context.Context, params *Prepa
 	_params = append(_params, params)
 
 	var result string
-	err = gp.C.Call(ctx, "preparePluginUpload", _params, &result)
+	err = bp.C.Call(ctx, "preparePluginUpload", _params, &result)
 	if err != nil {
 		return
 	}
@@ -1377,8 +1377,8 @@ func (gp *APIoverJSONRPC) PreparePluginUpload(ctx context.Context, params *Prepa
 }
 
 // ResolvePlugins calls resolvePlugins on the server
-func (gp *APIoverJSONRPC) ResolvePlugins(ctx context.Context, applicationID string, params *ResolvePluginsParams) (res *ResolvedPlugins, err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) ResolvePlugins(ctx context.Context, applicationID string, params *ResolvePluginsParams) (res *ResolvedPlugins, err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
@@ -1388,7 +1388,7 @@ func (gp *APIoverJSONRPC) ResolvePlugins(ctx context.Context, applicationID stri
 	_params = append(_params, params)
 
 	var result ResolvedPlugins
-	err = gp.C.Call(ctx, "resolvePlugins", _params, &result)
+	err = bp.C.Call(ctx, "resolvePlugins", _params, &result)
 	if err != nil {
 		return
 	}
@@ -1398,8 +1398,8 @@ func (gp *APIoverJSONRPC) ResolvePlugins(ctx context.Context, applicationID stri
 }
 
 // InstallUserPlugins calls installUserPlugins on the server
-func (gp *APIoverJSONRPC) InstallUserPlugins(ctx context.Context, params *InstallPluginsParams) (res bool, err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) InstallUserPlugins(ctx context.Context, params *InstallPluginsParams) (res bool, err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
@@ -1408,7 +1408,7 @@ func (gp *APIoverJSONRPC) InstallUserPlugins(ctx context.Context, params *Instal
 	_params = append(_params, params)
 
 	var result bool
-	err = gp.C.Call(ctx, "installUserPlugins", _params, &result)
+	err = bp.C.Call(ctx, "installUserPlugins", _params, &result)
 	if err != nil {
 		return
 	}
@@ -1418,8 +1418,8 @@ func (gp *APIoverJSONRPC) InstallUserPlugins(ctx context.Context, params *Instal
 }
 
 // UninstallUserPlugin calls uninstallUserPlugin on the server
-func (gp *APIoverJSONRPC) UninstallUserPlugin(ctx context.Context, params *UninstallPluginParams) (res bool, err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) UninstallUserPlugin(ctx context.Context, params *UninstallPluginParams) (res bool, err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
@@ -1428,7 +1428,7 @@ func (gp *APIoverJSONRPC) UninstallUserPlugin(ctx context.Context, params *Unins
 	_params = append(_params, params)
 
 	var result bool
-	err = gp.C.Call(ctx, "uninstallUserPlugin", _params, &result)
+	err = bp.C.Call(ctx, "uninstallUserPlugin", _params, &result)
 	if err != nil {
 		return
 	}
@@ -1438,8 +1438,8 @@ func (gp *APIoverJSONRPC) UninstallUserPlugin(ctx context.Context, params *Unins
 }
 
 // GuessGitTokenScopes calls GuessGitTokenScopes on the server
-func (gp *APIoverJSONRPC) GuessGitTokenScopes(ctx context.Context, params *GuessGitTokenScopesParams) (res *GuessedGitTokenScopes, err error) {
-	if gp == nil {
+func (bp *APIoverJSONRPC) GuessGitTokenScopes(ctx context.Context, params *GuessGitTokenScopesParams) (res *GuessedGitTokenScopes, err error) {
+	if bp == nil {
 		err = errNotConnected
 		return
 	}
@@ -1448,7 +1448,7 @@ func (gp *APIoverJSONRPC) GuessGitTokenScopes(ctx context.Context, params *Guess
 	_params = append(_params, params)
 
 	var result GuessedGitTokenScopes
-	err = gp.C.Call(ctx, "guessGitTokenScopes", _params, &result)
+	err = bp.C.Call(ctx, "guessGitTokenScopes", _params, &result)
 	if err != nil {
 		return
 	}
@@ -1619,7 +1619,7 @@ type Repository struct {
 // ApplicationCreationResult is the ApplicationCreationResult message type
 type ApplicationCreationResult struct {
 	CreatedApplicationID         string                    `json:"createdApplicationId,omitempty"`
-	ExistingApplications         []*ApplicationInfo          `json:"existingApplications,omitempty"`
+	ExistingApplications         []*ApplicationInfo        `json:"existingApplications,omitempty"`
 	RunningPrebuildApplicationID string                    `json:"runningPrebuildApplicationID,omitempty"`
 	RunningApplicationPrebuild   *RunningApplicationPrebuild `json:"runningApplicationPrebuild,omitempty"`
 	ApplicationURL               string                    `json:"applicationURL,omitempty"`
@@ -1633,7 +1633,7 @@ type RunningApplicationPrebuild struct {
 	ApplicationID string `json:"applicationID,omitempty"`
 }
 
-// Application is the Application message type
+// Application is the Bhojpur.NET Platform application message type
 type Application struct {
 
 	// The resolved/built fixed named of the base image. This field is only set if the application
@@ -1690,7 +1690,7 @@ type ApplicationConfig struct {
 	// Where the config object originates from.
 	//
 	// repo - from the repository
-	// definitely-gp - from github.com/bhojpur/definitely-gp
+	// platform-validated - from github.com/bhojpur/platform-validated
 	// derived - computed based on analyzing the repository
 	// default - our static catch-all default config
 	Origin            string        `json:"_origin,omitempty"`
@@ -1703,7 +1703,7 @@ type ApplicationConfig struct {
 
 // ApplicationContext is the ApplicationContext message type
 type ApplicationContext struct {
-	ForceCreateNewApplication bool   `json:"forceCreateNewApplication,omitempty"`
+	ForceCreateNewApplication bool `json:"forceCreateNewApplication,omitempty"`
 	NormalizedContextURL    string `json:"normalizedContextURL,omitempty"`
 	Title                   string `json:"title,omitempty"`
 }
@@ -1725,7 +1725,7 @@ type ApplicationImageSourceReference struct {
 // ApplicationInfo is the ApplicationInfo message type
 type ApplicationInfo struct {
 	LatestInstance *ApplicationInstance `json:"latestInstance,omitempty"`
-	Application      *Application       `json:"application,omitempty"`
+	Application    *Application         `json:"application,omitempty"`
 }
 
 // ApplicationInstance is the ApplicationInstance message type
