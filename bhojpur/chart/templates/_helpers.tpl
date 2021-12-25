@@ -7,7 +7,7 @@ Expand the name of the chart.
 {{- end -}}
 
 {{/*
-Create a default fully qualified app name.
+Create a default fully qualified Bhojpur.NET application name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
@@ -22,8 +22,8 @@ If release name contains chart name it will be used as a full name.
 {{/*
 installation names
 */}}
-{{- define "bhojpur.installation.longname" -}}{{- $gp := .gp -}}{{ $gp.installation.stage }}.{{ $gp.installation.tenant }}.{{ $gp.installation.region }}.{{ $gp.installation.cluster }}{{- end -}}
-{{- define "bhojpur.installation.shortname" -}}{{- $gp := .gp -}}{{- if $gp.installation.shortname -}}{{ $gp.installation.shortname }}{{- else -}}{{ $gp.installation.region }}-{{ $gp.installation.cluster }}{{- end -}}{{- end -}}
+{{- define "bhojpur.installation.longname" -}}{{- $bp := .bp -}}{{ $bp.installation.stage }}.{{ $bp.installation.tenant }}.{{ $bp.installation.region }}.{{ $bp.installation.cluster }}{{- end -}}
+{{- define "bhojpur.installation.shortname" -}}{{- $bp := .bp -}}{{- if $bp.installation.shortname -}}{{ $bp.installation.shortname }}{{- else -}}{{ $bp.installation.region }}-{{ $bp.installation.cluster }}{{- end -}}{{- end -}}
 
 {{/*
 Create chart name and version as used by the chart label.
@@ -34,19 +34,19 @@ Create chart name and version as used by the chart label.
 
 {{- define "bhojpur.container.imagePullPolicy" -}}
 {{- $ := .root -}}
-{{- $gp := .gp -}}
+{{- $bp := .bp -}}
 {{- $comp := .comp -}}
-imagePullPolicy: {{ $comp.imagePullPolicy | default $gp.imagePullPolicy | default "IfNotPresent" }}
+imagePullPolicy: {{ $comp.imagePullPolicy | default $bp.imagePullPolicy | default "IfNotPresent" }}
 {{- end -}}
 
 {{- define "bhojpur.container.resources" -}}
 {{- $ := .root -}}
-{{- $gp := .gp -}}
+{{- $bp := .bp -}}
 {{- $comp := .comp -}}
 resources:
   requests:
-    cpu: {{ if $comp.resources }} {{ $comp.resources.cpu | default $gp.resources.default.cpu }}{{ else }}{{ $gp.resources.default.cpu }}{{ end }}
-    memory: {{ if $comp.resources }} {{ $comp.resources.memory | default $gp.resources.default.memory }}{{ else }}{{ $gp.resources.default.memory }}{{ end -}}
+    cpu: {{ if $comp.resources }} {{ $comp.resources.cpu | default $bp.resources.default.cpu }}{{ else }}{{ $bp.resources.default.cpu }}{{ end }}
+    memory: {{ if $comp.resources }} {{ $comp.resources.memory | default $bp.resources.default.memory }}{{ else }}{{ $bp.resources.default.memory }}{{ end -}}
 {{- end -}}
 
 {{- define "bhojpur.container.ports" -}}
@@ -75,37 +75,37 @@ checksum/{{ $path }}: {{ include (print $.Template.BasePath "/" $path) $ | sha25
 
 {{- define "bhojpur.pod.affinity" -}}
 {{- $ := .root -}}
-{{- $gp := .gp -}}
+{{- $bp := .bp -}}
 {{- $comp := .comp -}}
 {{- if $comp.affinity -}}
 affinity:
 {{ $comp.affinity | toYaml | indent 2 }}
-{{- else if $gp.affinity -}}
+{{- else if $bp.affinity -}}
 affinity:
-{{ $gp.affinity | toYaml | indent 2 }}
+{{ $bp.affinity | toYaml | indent 2 }}
 {{- end -}}
 {{- end -}}
 
 {{- define "bhojpur.applicationAffinity" -}}
 {{- $ := .root -}}
-{{- $gp := .gp -}}
+{{- $bp := .bp -}}
 {{- $expr := dict -}}
-{{- if $gp.components.application.affinity -}}
-{{- if $gp.components.application.affinity.default -}}{{- $_ := set $expr $gp.components.application.affinity.default "" -}}{{- end -}}
-{{- if $gp.components.application.affinity.prebuild -}}{{- $_ := set $expr $gp.components.application.affinity.prebuild "" -}}{{- end -}}
-{{- if $gp.components.application.affinity.probe -}}{{- $_ := set $expr $gp.components.application.affinity.probe "" -}}{{- end -}}
-{{- if $gp.components.application.affinity.regular -}}{{- $_ := set $expr $gp.components.application.affinity.regular "" -}}{{- end -}}
+{{- if $bp.components.application.affinity -}}
+{{- if $bp.components.application.affinity.default -}}{{- $_ := set $expr $bp.components.application.affinity.default "" -}}{{- end -}}
+{{- if $bp.components.application.affinity.prebuild -}}{{- $_ := set $expr $bp.components.application.affinity.prebuild "" -}}{{- end -}}
+{{- if $bp.components.application.affinity.probe -}}{{- $_ := set $expr $bp.components.application.affinity.probe "" -}}{{- end -}}
+{{- if $bp.components.application.affinity.regular -}}{{- $_ := set $expr $bp.components.application.affinity.regular "" -}}{{- end -}}
 {{- end -}}
 {{- /*
   In a previous iteration of the templates the node affinity was part of the workspace pod template.
   In that case we need to extract the affinity from the template and add it to the workspace affinity set.
 */ -}}
-{{- if $gp.components.application.template -}}
-{{- if $gp.components.application.template.spec -}}
-{{- if $gp.components.application.template.spec.affinity -}}
-{{- if $gp.components.application.template.spec.affinity.nodeAffinity -}}
-{{- if $gp.components.application.template.spec.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution -}}
-{{- range $_, $t := $gp.components.application.template.spec.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms -}}
+{{- if $bp.components.application.template -}}
+{{- if $bp.components.application.template.spec -}}
+{{- if $bp.components.application.template.spec.affinity -}}
+{{- if $bp.components.application.template.spec.affinity.nodeAffinity -}}
+{{- if $bp.components.application.template.spec.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution -}}
+{{- range $_, $t := $bp.components.application.template.spec.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms -}}
 {{- range $_, $m := $t.matchExpressions -}}
     {{- $_ := set $expr $m.key "" -}}
 {{- end -}}
@@ -130,8 +130,8 @@ affinity:
 
 {{- define "bhojpur.msgbusWaiter.container" -}}
 {{- $ := .root -}}
-{{- $gp := .gp -}}
-{{- $this := dict "root" $ "gp" $gp "comp" $gp.components.serviceWaiter -}}
+{{- $bp := .bp -}}
+{{- $this := dict "root" $ "bp" $bp "comp" $bp.components.serviceWaiter -}}
 - name: msgbus-waiter
   image: {{ template "bhojpur.comp.imageFull" $this }}
   args:
@@ -146,8 +146,8 @@ affinity:
 
 {{- define "bhojpur.databaseWaiter.container" -}}
 {{- $ := .root -}}
-{{- $gp := .gp -}}
-{{- $this := dict "root" $ "gp" $gp "comp" $gp.components.serviceWaiter -}}
+{{- $bp := .bp -}}
+{{- $this := dict "root" $ "bp" $bp "comp" $bp.components.serviceWaiter -}}
 - name: database-waiter
   image: {{ template "bhojpur.comp.imageFull" $this }}
   args:
@@ -162,22 +162,22 @@ affinity:
 
 {{- define "bhojpur.container.defaultEnv" -}}
 {{- $ := .root -}}
-{{- $gp := .gp -}}
+{{- $bp := .bp -}}
 env:
 - name: KUBE_STAGE
-  value: "{{ $gp.installation.stage }}"
+  value: "{{ $bp.installation.stage }}"
 - name: KUBE_NAMESPACE
   valueFrom:
     fieldRef:
       fieldPath: metadata.namespace
 - name: KUBE_DOMAIN
-  value: "{{ $gp.installation.kubedomain | default "svc.cluster.local" }}"
+  value: "{{ $bp.installation.kubedomain | default "svc.cluster.local" }}"
 - name: BHOJPUR_DOMAIN
-  value: {{ $gp.hostname | quote }}
+  value: {{ $bp.hostname | quote }}
 - name: HOST_URL
-  value: "https://{{ $gp.hostname }}"
+  value: "https://{{ $bp.hostname }}"
 - name: BHOJPUR_REGION
-  value: {{ $gp.installation.region | quote }}
+  value: {{ $bp.installation.region | quote }}
 - name: BHOJPUR_INSTALLATION_LONGNAME
   value: {{ template "bhojpur.installation.longname" . }}
 - name: BHOJPUR_INSTALLATION_SHORTNAME
@@ -188,76 +188,76 @@ env:
 
 {{- define "bhojpur.loglevel" -}}
 {{- $ := .root -}}
-{{- $gp := .gp -}}
-{{ $gp.log.level | default "info" | lower | quote }}
+{{- $bp := .bp -}}
+{{ $bp.log.level | default "info" | lower | quote }}
 {{- end -}}
 
 {{- define "bhojpur.container.analyticsEnv" -}}
 {{- $ := .root -}}
-{{- $gp := .gp -}}
-{{- if $gp.analytics -}}
+{{- $bp := .bp -}}
+{{- if $bp.analytics -}}
 - name: BHOJPUR_ANALYTICS_WRITER
-  value: {{ $gp.analytics.writer | quote }}
+  value: {{ $bp.analytics.writer | quote }}
 - name: BHOJPUR_ANALYTICS_SEGMENT_KEY
-  value: {{ $gp.analytics.segmentKey | quote }}
+  value: {{ $bp.analytics.segmentKey | quote }}
 {{- end }}
 {{- end -}}
 
 {{- define "bhojpur.container.dbEnv" -}}
 {{- $ := .root -}}
-{{- $gp := .gp -}}
+{{- $bp := .bp -}}
 - name: DB_HOST
-  value: "{{ $gp.db.host }}"
+  value: "{{ $bp.db.host }}"
 - name: DB_USERNAME
-  value: "{{ $gp.db.username }}"
+  value: "{{ $bp.db.username }}"
 - name: DB_PORT
-  value: "{{ $gp.db.port }}"
+  value: "{{ $bp.db.port }}"
 - name: DB_PASSWORD
-  value: "{{ $gp.db.password }}"
-{{- if $gp.db.disableDeletedEntryGC }}
+  value: "{{ $bp.db.password }}"
+{{- if $bp.db.disableDeletedEntryGC }}
 - name: DB_DELETED_ENTRIES_GC_ENABLED
   value: "false"
 {{- end }}
 - name: DB_ENCRYPTION_KEYS
-{{- if $gp.dbEncryptionKeys.secretName }}
+{{- if $bp.dbEncryptionKeys.secretName }}
   valueFrom:
     secretKeyRef:
-      name: {{ $gp.dbEncryptionKeys.secretName }}
+      name: {{ $bp.dbEncryptionKeys.secretName }}
       key: keys
 {{- else }}
-  value: {{ $.Files.Get $gp.dbEncryptionKeys.file | quote }}
+  value: {{ $.Files.Get $bp.dbEncryptionKeys.file | quote }}
 {{- end -}}
 {{- end -}}
 
 {{- define "bhojpur.container.messagebusEnv" -}}
 {{- $ := .root -}}
-{{- $gp := .gp -}}
+{{- $bp := .bp -}}
 - name: MESSAGEBUS_USERNAME
-  value: "{{ $gp.rabbitmq.auth.username }}"
+  value: "{{ $bp.rabbitmq.auth.username }}"
 - name: MESSAGEBUS_PASSWORD
-  value: "{{ $gp.rabbitmq.auth.password }}"
+  value: "{{ $bp.rabbitmq.auth.password }}"
 - name: MESSAGEBUS_CA
   valueFrom:
     secretKeyRef:
-        name: {{ $gp.rabbitmq.auth.tls.existingSecret | quote }}
+        name: {{ $bp.rabbitmq.auth.tls.existingSecret | quote }}
         key: ca.crt
 - name: MESSAGEBUS_CERT
   valueFrom:
     secretKeyRef:
-        name: {{ $gp.rabbitmq.auth.tls.existingSecret | quote }}
+        name: {{ $bp.rabbitmq.auth.tls.existingSecret | quote }}
         key: tls.crt
 - name: MESSAGEBUS_KEY
   valueFrom:
     secretKeyRef:
-        name: {{ $gp.rabbitmq.auth.tls.existingSecret | quote }}
+        name: {{ $bp.rabbitmq.auth.tls.existingSecret | quote }}
         key: tls.key
 {{- end -}}
 
 {{- define "bhojpur.container.tracingEnv" -}}
 {{- $ := .root -}}
-{{- $gp := .gp -}}
+{{- $bp := .bp -}}
 {{- $comp := .comp -}}
-{{- $tracing := $comp.tracing | default $gp.tracing -}}
+{{- $tracing := $comp.tracing | default $bp.tracing -}}
 {{- if $tracing }}
 {{- if $tracing.endpoint }}
 - name: JAEGER_ENDPOINT
@@ -285,27 +285,27 @@ registry.{{ .Values.hostname }}
 
 {{- define "bhojpur.builtinRegistry.internal_name" -}}
 {{- $ := .root -}}
-{{- $gp := .gp -}}
-{{ index .Values "docker-registry" "fullnameOverride" }}.{{ .Release.Namespace }}.{{ $gp.installation.kubedomain | default "svc.cluster.local" }}
+{{- $bp := .bp -}}
+{{ index .Values "docker-registry" "fullnameOverride" }}.{{ .Release.Namespace }}.{{ $bp.installation.kubedomain | default "svc.cluster.local" }}
 {{- end -}}
 
 {{- define "bhojpur.comp.version" -}}
 {{- $ := .root -}}
-{{- $gp := .gp -}}
+{{- $bp := .bp -}}
 {{- $comp := .comp -}}
-{{- required "please specify the Bhojpur.NET Platform version to use in your values.yaml or with the helm flag --set version=x.x.x" ($comp.version | default $gp.version) -}}
+{{- required "please specify the Bhojpur.NET Platform version to use in your values.yaml or with the helm flag --set version=x.x.x" ($comp.version | default $bp.version) -}}
 {{- end -}}
 
 {{- define "bhojpur.comp.imageRepo" -}}
 {{- $ := .root -}}
-{{- $gp := .gp -}}
+{{- $bp := .bp -}}
 {{- $comp := .comp -}}
-{{- $comp.imagePrefix | default $gp.imagePrefix -}}{{- $comp.imageName | default $comp.name -}}
+{{- $comp.imagePrefix | default $bp.imagePrefix -}}{{- $comp.imageName | default $comp.name -}}
 {{- end -}}
 
 {{- define "bhojpur.comp.imageFull" -}}
 {{- $ := .root -}}
-{{- $gp := .gp -}}
+{{- $bp := .bp -}}
 {{- $comp := .comp -}}
 {{ template "bhojpur.comp.imageRepo" . }}:{{- template "bhojpur.comp.version" . -}}
 {{- end -}}
