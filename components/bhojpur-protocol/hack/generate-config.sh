@@ -7,4 +7,4 @@ schema-generate -p protocol ../data/bhojpur-schema.json > ../go/bhojpur-config-t
 sed -i 's/json:/yaml:/g' ../go/bhojpur-config-types.go
 gofmt -w ../go/bhojpur-config-types.go
 
-leeway run components:update-license-header
+gorpa run components:update-license-header
