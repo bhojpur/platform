@@ -24,4 +24,4 @@ jobs:
           export GORPA_APPLICATION_ROOT=$(pwd)
           headCommit=$(curl -H 'Accept: application/vnd.github.VERSION.sha' https://api.github.com/repos/bhojpur/openvscode-server/commits/bp-code/main)
           cd components/ide/code
-          gorpa build -Dversion=nightly -DimageRepoBase=ap.gcr.io/bhojpur/build -DcodeCommit=$headCommit .:docker
+          gorpa build -Dversion=nightly -DimageRepoBase=us-west2-docker.pkg.dev/bhojpur/platform/build -DcodeCommit=$headCommit .:docker
