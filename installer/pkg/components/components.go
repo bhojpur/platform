@@ -24,12 +24,12 @@ import (
 	"github.com/bhojpur/platform/installer/pkg/components/rabbitmq"
 	registryfacade "github.com/bhojpur/platform/installer/pkg/components/registry-facade"
 	"github.com/bhojpur/platform/installer/pkg/components/server"
-	"github.com/bhojpur/platform/installer/pkg/components/workspace"
-	wsdaemon "github.com/bhojpur/platform/installer/pkg/components/ws-daemon"
-	wsmanager "github.com/bhojpur/platform/installer/pkg/components/ws-manager"
-	wsmanagerbridge "github.com/bhojpur/platform/installer/pkg/components/ws-manager-bridge"
-	wsproxy "github.com/bhojpur/platform/installer/pkg/components/ws-proxy"
-	wsscheduler "github.com/bhojpur/platform/installer/pkg/components/ws-scheduler"
+	"github.com/bhojpur/platform/installer/pkg/components/application"
+	wsdaemon "github.com/bhojpur/platform/installer/pkg/components/bp-daemon"
+	wsmanager "github.com/bhojpur/platform/installer/pkg/components/bp-manager"
+	wsmanagerbridge "github.com/bhojpur/platform/installer/pkg/components/bp-manager-bridge"
+	wsproxy "github.com/bhojpur/platform/installer/pkg/components/bp-proxy"
+	wsscheduler "github.com/bhojpur/platform/installer/pkg/components/bp-scheduler"
 )
 
 var MetaObjects = common.CompositeRenderFunc(
