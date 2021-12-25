@@ -17,7 +17,7 @@ const (
 	CertManagerCAIssuer         = "ca-issuer"
 	DockerRegistryURL           = "docker.io"
 	DockerRegistryName          = "registry"
-	BhojpurContainerRegistry    = "ap.gcr.io/bhojpur/build"
+	BhojpurContainerRegistry    = "us-west2-docker.pkg.dev/bhojpur/platform/build"
 	InClusterDbSecret           = "mysql"
 	InClusterMessageQueueName   = "rabbitmq"
 	InClusterMessageQueueTLS    = "messagebus-certificates-secret-core"
@@ -38,10 +38,10 @@ const (
 	RegistryFacadeTLSCertSecret = "builtin-registry-facade-cert"
 	ServerComponent             = "server"
 	SystemNodeCritical          = "system-node-critical"
-	WSManagerComponent          = "ws-manager"
-	WSManagerBridgeComponent    = "ws-manager-bridge"
-	WSProxyComponent            = "ws-proxy"
-	WSSchedulerComponent        = "ws-scheduler"
+	WSManagerComponent          = "bp-manager"
+	WSManagerBridgeComponent    = "bp-manager-bridge"
+	WSProxyComponent            = "bp-proxy"
+	WSSchedulerComponent        = "bp-scheduler"
 
 	AnnotationConfigChecksum    = "bhojpur.net/checksum_config"
 )
