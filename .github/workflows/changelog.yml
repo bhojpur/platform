@@ -10,7 +10,7 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    container: us-west2-docker.pkg.dev/changelog:0.0.34
+    container: us-west2-docker.pkg.dev/bhojpur/platform/changelog:0.0.34
 
     steps:
       - uses: actions/checkout@v2
