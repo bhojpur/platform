@@ -41,15 +41,15 @@ type Components struct {
 		Supervisor       Versioned `json:"supervisor"`
 		Applicationkit   Versioned `json:"applicationkit"`
 		ApplicationImages struct {
-			DCPSaaSImage  Versioned `json:"dcpSaaS"`
-			SCMSaaSImage  Versioned `json:"scmSaaS"`
-			CRMSaaSImage  Versioned `json:"crmSaaS"`
-			ERPSaaSImage  Versioned `json:"erpSaaS"`
-			MRPSaaSImage  Versioned `json:"mrpSaaS"`
-      SRMSaaSImage  Versioned `json:"srmSaaS"`
-			FMSSaaSImage  Versioned `json:"fmsSaaS"`
-      ODESaaSImage  Versioned `json:"odeSaaS"`
-			QVMSaaSImage  Versioned `json:"qvmSaaS"`
+		dcpSaaSImage  Versioned `json:"dcpSaaS"`
+		scmSaaSImage  Versioned `json:"scmSaaS"`
+		crmSaaSImage  Versioned `json:"crmSaaS"`
+		erpSaaSImage  Versioned `json:"erpSaaS"`
+		mrpSaaSImage  Versioned `json:"mrpSaaS"`
+      		srmSaaSImage  Versioned `json:"srmSaaS"`
+		fmsSaaSImage  Versioned `json:"fmsSaaS"`
+      		odeSaaSImage  Versioned `json:"odeSaaS"`
+		qvmSaaSImage  Versioned `json:"qvmSaaS"`
     } `json:"desktopIdeImages"`
 	} `json:"workspace"`
 	WSDaemon struct {
@@ -60,8 +60,8 @@ type Components struct {
 			ShiftFSModuleLoader     Versioned `json:"shiftfsModuleLoader"`
 		} `json:"userNamespaces"`
 	} `json:"wsDaemon"`
-	WSManager       Versioned `json:"wsManager"`
-	WSManagerBridge Versioned `json:"wsManagerBridge"`
-	WSProxy         Versioned `json:"wsProxy"`
-	WSScheduler     Versioned `json:"wsScheduler"`
+	WSManager       Versioned `json:"bpManager"`
+	WSManagerBridge Versioned `json:"bpManagerBridge"`
+	WSProxy         Versioned `json:"bpProxy"`
+	WSScheduler     Versioned `json:"bpScheduler"`
 }
