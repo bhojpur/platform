@@ -55,8 +55,8 @@ components/theia/app/gen-webpack.config.js
 charts/bhojpur_net/secrets/decrypted
 
 # Build artifacts
-components/ws-scheduler/ws-scheduler
-components/ws-proxy/ws-proxy
+components/bp-scheduler/bp-scheduler
+components/bp-proxy/bp-proxy
 
 # Logs
 components/server/*.log
