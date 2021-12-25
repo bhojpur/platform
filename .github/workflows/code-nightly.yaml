@@ -11,8 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: downlaod leeway
-        run: cd /usr/bin && curl -fsSL https://github.com/bhojpur/leeway/releases/download/v0.2.8/leeway_0.2.8_Linux_x86_64.tar.gz | sudo tar xz
+      - name: downlaod gorpa
+        run: cd /usr/bin && curl -fsSL https://github.com/bhojpur/gorpa/releases/download/v0.0.5/gorpa_0.0.5_Linux_x86_64.tar.gz | sudo tar xz
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@master
         with:
@@ -21,7 +21,7 @@ jobs:
           export_default_credentials: true
       - run: |
           gcloud auth configure-docker --quiet
-          export LEEWAY_WORKSPACE_ROOT=$(pwd)
-          headCommit=$(curl -H 'Accept: application/vnd.github.VERSION.sha' https://api.github.com/repos/bhojpur/openvscode-server/commits/gp-code/main)
+          export GORPA_APPLICATION_ROOT=$(pwd)
+          headCommit=$(curl -H 'Accept: application/vnd.github.VERSION.sha' https://api.github.com/repos/bhojpur/openvscode-server/commits/bp-code/main)
           cd components/ide/code
-          leeway build -Dversion=nightly -DimageRepoBase=ap.gcr.io/bhojpur/build -DcodeCommit=$headCommit .:docker
+          gorpa build -Dversion=nightly -DimageRepoBase=ap.gcr.io/bhojpur/build -DcodeCommit=$headCommit .:docker
