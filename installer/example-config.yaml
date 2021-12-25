@@ -21,7 +21,7 @@ objectStorage:
   inCluster: true
 observability:
   logLevel: info
-repository: ap.gcr.io/bhojpur/build
+repository: us-west2-docker.pkg.dev/bhojpur/platform/build
 workspace:
   resources:
     requests:
