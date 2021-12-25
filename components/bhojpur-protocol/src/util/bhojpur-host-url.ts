@@ -48,7 +48,7 @@ export class BhojpurHostUrl {
 
     withoutApplicationPrefix(): BhojpurHostUrl {
         if (!this.url.host.match(applicationUrlPrefixRegex)) {
-            // URL has no application prefix
+            // by default, the URL has no Bhojpur.NET Platform application prefix
             return this;
         }
 
@@ -86,6 +86,10 @@ export class BhojpurHostUrl {
         return this.with(url => ({ pathname: '/' }));
     }
 
+    asAbout(): BhojpurHostUrl {
+        return this.with(url => ({ pathname: '/about' }));
+    }
+
     asLogin(): BhojpurHostUrl {
         return this.with(url => ({ pathname: '/login' }));
     }
@@ -104,6 +108,14 @@ export class BhojpurHostUrl {
 
     asPreferences(): BhojpurHostUrl {
         return this.with(url => ({ pathname: '/preferences' }));
+    }
+
+    asSupportServices(): BhojpurHostUrl {
+        return this.with(url => ({ pathname: '/support' }));
+    }
+
+    asDocumentation(): BhojpurHostUrl {
+        return this.with(url => ({ pathname: '/document' }));
     }
 
     asGraphQLApi(): BhojpurHostUrl {
@@ -138,7 +150,7 @@ export class BhojpurHostUrl {
         if (hostSegs.length > 1) {
             const matchResults = hostSegs[0].match(applicationIDRegex);
             if (matchResults) {
-                // URL has a application prefix
+                // URL has a Bhojpur.NET Platform application prefix
                 // port prefixes are excluded
                 return matchResults[0];
             }
