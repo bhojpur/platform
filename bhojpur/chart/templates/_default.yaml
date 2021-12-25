@@ -3,7 +3,7 @@
 
 {{ define "bhojpur.service.default" }}
 {{- $ := .root -}}
-{{- $gp := .gp -}}
+{{- $bp := .bp -}}
 {{- $comp := .comp -}}
 {{- if not $comp.disabled -}}
 kind: Service
@@ -14,7 +14,7 @@ metadata:
     app: {{ template "bhojpur.fullname" $ }}
     component: {{ $comp.name }}
     kind: service
-    stage: {{ $gp.installation.stage }}
+    stage: {{ $bp.installation.stage }}
     {{- range $k, $v := $comp.svcLabels }}
     {{ $k }}: {{ $v }}
     {{- end }}
@@ -46,7 +46,7 @@ spec:
     app: {{ template "bhojpur.fullname" $ }}
     component: {{ $comp.name }}
     kind: {{ $comp.selectorKind | default "pod" }}
-    stage: {{ $gp.installation.stage }}
+    stage: {{ $bp.installation.stage }}
   type: {{ $comp.serviceType | default "ClusterIP" }}
   {{- if $comp.clusterIP }}
   clusterIP: {{ $comp.clusterIP }}
