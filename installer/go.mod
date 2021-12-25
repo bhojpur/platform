@@ -12,11 +12,11 @@ require (
 	github.com/bhojpur/platform/image-builder/api v0.0.0-00010101000000-000000000000
 	github.com/bhojpur/platform/openvsx-proxy v0.0.0-00010101000000-000000000000
 	github.com/bhojpur/platform/registry-facade/api v0.0.0-00010101000000-000000000000
-	github.com/bhojpur/platform/ws-daemon v0.0.0-00010101000000-000000000000
-	github.com/bhojpur/platform/ws-daemon/api v0.0.0-00010101000000-000000000000
-	github.com/bhojpur/platform/ws-manager/api v0.0.0-00010101000000-000000000000
-	github.com/bhojpur/platform/ws-proxy v0.0.0-00010101000000-000000000000
-	github.com/bhojpur/platform/ws-scheduler v0.0.0-00010101000000-000000000000
+	github.com/bhojpur/platform/bp-daemon v0.0.0-00010101000000-000000000000
+	github.com/bhojpur/platform/bp-daemon/api v0.0.0-00010101000000-000000000000
+	github.com/bhojpur/platform/bp-manager/api v0.0.0-00010101000000-000000000000
+	github.com/bhojpur/platform/bp-proxy v0.0.0-00010101000000-000000000000
+	github.com/bhojpur/platform/bp-scheduler v0.0.0-00010101000000-000000000000
 	github.com/go-playground/validator/v10 v10.9.0
 	github.com/google/go-cmp v0.5.6
 	github.com/jetstack/cert-manager v1.4.4
@@ -223,84 +223,84 @@ require (
 	sigs.k8s.io/structured-merge-diff/v4 v4.1.2 // indirect
 )
 
-replace github.com/bhojpur/platform/image-builder => ../components/image-builder-mk3 // leeway
+replace github.com/bhojpur/platform/image-builder => ../components/image-builder-mk3 // GoRPA
 
-replace github.com/bhojpur/platform/image-builder/api => ../components/image-builder-api/go // leeway
+replace github.com/bhojpur/platform/image-builder/api => ../components/image-builder-api/go // GoRPA
 
-replace github.com/bhojpur/platform/openvsx-proxy => ../components/openvsx-proxy // leeway
+replace github.com/bhojpur/platform/openvsx-proxy => ../components/openvsx-proxy // GoRPA
 
-replace github.com/bhojpur/platform/ws-scheduler => ../components/ee/ws-scheduler // leeway
+replace github.com/bhojpur/platform/bp-scheduler => ../components/ee/bp-scheduler // GoRPA
 
-replace github.com/bhojpur/platform/ws-proxy => ../components/ws-proxy // leeway
+replace github.com/bhojpur/platform/bp-proxy => ../components/bp-proxy // GoRPA
 
-replace github.com/bhojpur/platform/agent-smith => ../components/ee/agent-smith // leeway
+replace github.com/bhojpur/platform/agent-smith => ../components/ee/agent-smith // GoRPA
 
-replace github.com/bhojpur/platform/blobserve => ../components/blobserve // leeway
+replace github.com/bhojpur/platform/blobserve => ../components/blobserve // GoRPA
 
-replace github.com/bhojpur/platform/common-go => ../components/common-go // leeway
+replace github.com/bhojpur/platform/common-go => ../components/common-go // GoRPA
 
-replace github.com/bhojpur/platform/content-service => ../components/content-service // leeway
+replace github.com/bhojpur/platform/content-service => ../components/content-service // GoRPA
 
-replace github.com/bhojpur/platform/content-service/api => ../components/content-service-api/go // leeway
+replace github.com/bhojpur/platform/content-service/api => ../components/content-service-api/go // GoRPA
 
-replace github.com/bhojpur/platform/bhojpur-protocol => ../components/bhojpur-protocol/go // leeway
+replace github.com/bhojpur/platform/bhojpur-protocol => ../components/bhojpur-protocol/go // GoRPA
 
-replace github.com/bhojpur/platform/registry-facade => ../components/registry-facade // leeway
+replace github.com/bhojpur/platform/registry-facade => ../components/registry-facade // GoRPA
 
-replace github.com/bhojpur/platform/registry-facade/api => ../components/registry-facade-api/go // leeway
+replace github.com/bhojpur/platform/registry-facade/api => ../components/registry-facade-api/go // GoRPA
 
-replace github.com/bhojpur/platform/ws-daemon => ../components/ws-daemon // leeway
+replace github.com/bhojpur/platform/bp-daemon => ../components/bp-daemon // GoRPA
 
-replace github.com/bhojpur/platform/ws-daemon/api => ../components/ws-daemon-api/go // leeway
+replace github.com/bhojpur/platform/bp-daemon/api => ../components/bp-daemon-api/go // GoRPA
 
-replace github.com/bhojpur/platform/ws-manager/api => ../components/ws-manager-api/go // leeway
+replace github.com/bhojpur/platform/bp-manager/api => ../components/bp-manager-api/go // GoRPA
 
-replace k8s.io/api => k8s.io/api v0.22.2 // leeway indirect from components/common-go:lib
+replace k8s.io/api => k8s.io/api v0.22.2 // GoRPA indirect from components/common-go:lib
 
-replace k8s.io/apiextensions-apiserver => k8s.io/apiextensions-apiserver v0.22.2 // leeway indirect from components/common-go:lib
+replace k8s.io/apiextensions-apiserver => k8s.io/apiextensions-apiserver v0.22.2 // GoRPA indirect from components/common-go:lib
 
-replace k8s.io/apimachinery => k8s.io/apimachinery v0.22.2 // leeway indirect from components/common-go:lib
+replace k8s.io/apimachinery => k8s.io/apimachinery v0.22.2 // GoRPA indirect from components/common-go:lib
 
-replace k8s.io/apiserver => k8s.io/apiserver v0.22.2 // leeway indirect from components/common-go:lib
+replace k8s.io/apiserver => k8s.io/apiserver v0.22.2 // GoRPA indirect from components/common-go:lib
 
-replace k8s.io/cli-runtime => k8s.io/cli-runtime v0.22.2 // leeway indirect from components/common-go:lib
+replace k8s.io/cli-runtime => k8s.io/cli-runtime v0.22.2 // GoRPA indirect from components/common-go:lib
 
-replace k8s.io/client-go => k8s.io/client-go v0.22.2 // leeway indirect from components/common-go:lib
+replace k8s.io/client-go => k8s.io/client-go v0.22.2 // GoRPA indirect from components/common-go:lib
 
-replace k8s.io/cloud-provider => k8s.io/cloud-provider v0.22.2 // leeway indirect from components/common-go:lib
+replace k8s.io/cloud-provider => k8s.io/cloud-provider v0.22.2 // GoRPA indirect from components/common-go:lib
 
-replace k8s.io/cluster-bootstrap => k8s.io/cluster-bootstrap v0.22.2 // leeway indirect from components/common-go:lib
+replace k8s.io/cluster-bootstrap => k8s.io/cluster-bootstrap v0.22.2 // GoRPA indirect from components/common-go:lib
 
-replace k8s.io/code-generator => k8s.io/code-generator v0.22.2 // leeway indirect from components/common-go:lib
+replace k8s.io/code-generator => k8s.io/code-generator v0.22.2 // GoRPA indirect from components/common-go:lib
 
-replace k8s.io/component-base => k8s.io/component-base v0.22.2 // leeway indirect from components/common-go:lib
+replace k8s.io/component-base => k8s.io/component-base v0.22.2 // GoRPA indirect from components/common-go:lib
 
-replace k8s.io/cri-api => k8s.io/cri-api v0.22.2 // leeway indirect from components/common-go:lib
+replace k8s.io/cri-api => k8s.io/cri-api v0.22.2 // GoRPA indirect from components/common-go:lib
 
-replace k8s.io/csi-translation-lib => k8s.io/csi-translation-lib v0.22.2 // leeway indirect from components/common-go:lib
+replace k8s.io/csi-translation-lib => k8s.io/csi-translation-lib v0.22.2 // GoRPA indirect from components/common-go:lib
 
-replace k8s.io/kube-aggregator => k8s.io/kube-aggregator v0.22.2 // leeway indirect from components/common-go:lib
+replace k8s.io/kube-aggregator => k8s.io/kube-aggregator v0.22.2 // GoRPA indirect from components/common-go:lib
 
-replace k8s.io/kube-controller-manager => k8s.io/kube-controller-manager v0.22.2 // leeway indirect from components/common-go:lib
+replace k8s.io/kube-controller-manager => k8s.io/kube-controller-manager v0.22.2 // GoRPA indirect from components/common-go:lib
 
-replace k8s.io/kube-proxy => k8s.io/kube-proxy v0.22.2 // leeway indirect from components/common-go:lib
+replace k8s.io/kube-proxy => k8s.io/kube-proxy v0.22.2 // GoRPA indirect from components/common-go:lib
 
-replace k8s.io/kube-scheduler => k8s.io/kube-scheduler v0.22.2 // leeway indirect from components/common-go:lib
+replace k8s.io/kube-scheduler => k8s.io/kube-scheduler v0.22.2 // GoRPA indirect from components/common-go:lib
 
-replace k8s.io/kubelet => k8s.io/kubelet v0.22.2 // leeway indirect from components/common-go:lib
+replace k8s.io/kubelet => k8s.io/kubelet v0.22.2 // GoRPA indirect from components/common-go:lib
 
-replace k8s.io/legacy-cloud-providers => k8s.io/legacy-cloud-providers v0.22.2 // leeway indirect from components/common-go:lib
+replace k8s.io/legacy-cloud-providers => k8s.io/legacy-cloud-providers v0.22.2 // GoRPA indirect from components/common-go:lib
 
-replace k8s.io/metrics => k8s.io/metrics v0.22.2 // leeway indirect from components/common-go:lib
+replace k8s.io/metrics => k8s.io/metrics v0.22.2 // GoRPA indirect from components/common-go:lib
 
-replace k8s.io/sample-apiserver => k8s.io/sample-apiserver v0.22.2 // leeway indirect from components/common-go:lib
+replace k8s.io/sample-apiserver => k8s.io/sample-apiserver v0.22.2 // GoRPA indirect from components/common-go:lib
 
-replace k8s.io/component-helpers => k8s.io/component-helpers v0.22.2 // leeway indirect from components/common-go:lib
+replace k8s.io/component-helpers => k8s.io/component-helpers v0.22.2 // GoRPA indirect from components/common-go:lib
 
-replace k8s.io/controller-manager => k8s.io/controller-manager v0.22.2 // leeway indirect from components/common-go:lib
+replace k8s.io/controller-manager => k8s.io/controller-manager v0.22.2 // GoRPA indirect from components/common-go:lib
 
-replace k8s.io/kubectl => k8s.io/kubectl v0.22.2 // leeway indirect from components/common-go:lib
+replace k8s.io/kubectl => k8s.io/kubectl v0.22.2 // GoRPA indirect from components/common-go:lib
 
-replace k8s.io/mount-utils => k8s.io/mount-utils v0.22.2 // leeway indirect from components/common-go:lib
+replace k8s.io/mount-utils => k8s.io/mount-utils v0.22.2 // GoRPA indirect from components/common-go:lib
 
-replace k8s.io/pod-security-admission => k8s.io/pod-security-admission v0.22.2 // leeway indirect from components/common-go:lib
+replace k8s.io/pod-security-admission => k8s.io/pod-security-admission v0.22.2 // GoRPA indirect from components/common-go:lib
