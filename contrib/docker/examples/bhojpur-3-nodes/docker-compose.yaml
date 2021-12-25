@@ -2,7 +2,7 @@ version: '3'
 services:
 
   bhojpur:
-    image: gcr.io/bhojpur/self-hosted/bhojpur-k3s:${VERSION:-latest}
+    image: us-west2-docker.pkg.dev/bhojpur/platform/self-hosted/bhojpur-k3s:${VERSION:-latest}
     command: --flannel-backend=none --disable-network-policy
     privileged: true
     volumes:
