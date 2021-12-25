@@ -7,7 +7,7 @@ package blobserve
 import (
 	"github.com/bhojpur/platform/installer/pkg/common"
 	"github.com/bhojpur/platform/installer/pkg/components/proxy"
-	wsproxy "github.com/bhojpur/platform/installer/pkg/components/ws-proxy"
+	wsproxy "github.com/bhojpur/platform/installer/pkg/components/bp-proxy"
 
 	networkingv1 "k8s.io/api/networking/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
