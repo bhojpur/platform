@@ -14,7 +14,7 @@ const expect = chai.expect
     @test public async testGenerateApplicationId() {
         for (let i = 0; i < 100; i++) {
             const id = await generateApplicationID();
-            expect(new BhojpurHostUrl().withApplicationPrefix(id, "ap").applicationId).to.equal(id);
+            expect(new BhojpurHostUrl().withApplicationPrefix(id, "ws").applicationId).to.equal(id);
         }
     }
 
