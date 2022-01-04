@@ -20,7 +20,7 @@ packages:
         # We use this in two modes:
         #  - publishing "Bhojpur.NET Platform - Self-Hosted" releases: version _is_ semver compliant
         #  - publishing "branch builds": version is <branch-name>.<nr> (_not_ semver compliant)
-        # To fix this locally (without poisoning the leeway upstream deps) we detect semver compliance here, and in case of non-compliance, prefix with "0.1.0-".
+        # To fix this locally (without poisoning the Bhojpur GoRPA upstream deps) we detect semver compliance here, and in case of non-compliance, prefix with "0.1.0-".
         # Note: This assumes all clients of the resulting "branch builds" package do not care about the actual version used.
         - ["sh", "-c", "(npm install semver && node test-semver.js ${version}) && yq w -i Chart.yaml version ${version} || yq w -i Chart.yaml version 0.1.0-${version}"]
         - ["rm", "-f", "test-semver.js"]
