@@ -1,0 +1,62 @@
+affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: workload/meta
+          operator: Exists
+
+components:
+
+  bpDaemon:
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+          - matchExpressions:
+            - key: bhojpur.net/application_1
+              operator: Exists
+
+  registryFacade:
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+          - matchExpressions:
+            - key: bhojpur.net/application_1
+              operator: Exists
+
+
+  application:
+    affinity:
+      default: bhojpur.net/application_1
+
+# Sub-Charts
+
+rabbitmq:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: workload/meta
+            operator: Exists
+
+mysql:
+  primary:
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+          - matchExpressions:
+            - key: workload/meta
+              operator: Exists
+
+minio:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: workload/meta
+            operator: Exists

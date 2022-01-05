@@ -1,0 +1,48 @@
+args:
+- name: namespace
+  desc: "The namespace to remove - if left empty this job removes all preview environments"
+  required: false
+pod:
+  serviceAccount: piro
+  nodeSelector:
+    dev/workload: workload
+  imagePullSecrets:
+  - name: us-gcr-io-pull-secret
+  volumes:
+  - name: gcp-sa
+    secret:
+      secretName: gcp-sa-bhojpur-dev-deployer
+  containers:
+  - name: wipe-devstaging
+    image: us-west2-docker.pkg.dev/bhojpur/platform/core-dev/dev/dev-environment:cw-bump-gorpa.29
+    workingDir: /application
+    imagePullPolicy: Always
+    volumeMounts:
+    - name: gcp-sa
+      mountPath: /mnt/secrets/gcp-sa
+      readOnly: true
+    env:
+    - name: HONEYCOMB_DATASET
+      value: "piro"
+    - name: HONEYCOMB_API_KEY
+      valueFrom:
+        secretKeyRef:
+          name: honeycomb-api-key
+          key: apikey
+    command:
+    - bash
+    - -c
+    - |
+      sleep 1
+      set -Eeuo pipefail
+
+      piro log phase prepare
+      gcloud auth activate-service-account --key-file /mnt/secrets/gcp-sa/service-account.json
+      gcloud container clusters get-credentials core-dev --zone us-west2-b --project bhojpur-core-dev
+
+      export NAMESPACE="{{ .Annotations.namespace }}"
+      sudo chown -R bhojpur:bhojpur /application
+
+      cd .piro
+      yarn install
+      npx ts-node ./wipe-devstaging.ts
