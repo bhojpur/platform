@@ -48,7 +48,7 @@
       },
       "go.formatTool": "goimports",
       "go.useLanguageServer": true,
-      "workspace.supportMultiRootWorkspace": true,
+      "application.supportMultiRootApplication": true,
       "database.connections": [
          {
             "type": "mysql",

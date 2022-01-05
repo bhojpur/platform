@@ -15,7 +15,7 @@ import (
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "bhojpur-installer",
-	Short: "Installs Bhojpur.NET Platform",
+	Short: "Installs the Bhojpur.NET Platform software",
 }
 
 func Execute() {
