@@ -29,5 +29,5 @@ jobs:
         env:
           GITHUB_USER: shashi-rai
           GITHUB_EMAIL: shashi.rai@bhojpur-consulting.org
-          TOKEN: ${{ secrets.ROBOQUAT_AUTOMATIC_CHANGELOG }}
+          TOKEN: ${{ secrets.BHOJPUR_AUTOMATIC_CHANGELOG }}
         shell: bash
